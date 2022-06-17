@@ -1,4 +1,5 @@
 import './App.css';
+import Button from 'react-bootstrap/Button';
 
 function App() {
   return (
@@ -7,6 +8,10 @@ function App() {
         <p>
           Future Home of MEV Degen.
         </p>
+
+        <Button variant="primary" href="https://news.ycombinator.com">
+          Hacker News
+        </Button>
       </header>
     </div>
   );
