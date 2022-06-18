@@ -1,6 +1,7 @@
 import './App.css';
 import { Container, Nav, Navbar } from 'react-bootstrap';
 import Home from './Home';
+import Arbitrage from './Arbitrage';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         </Container>
       </Navbar>
       <Home />
+      <Arbitrage />
     </div>
   );
 }
