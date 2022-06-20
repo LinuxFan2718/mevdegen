@@ -1,5 +1,5 @@
 import { useAddress, useDisconnect, useMetamask } from "@thirdweb-dev/react";
-import { Button, Nav, Navbar } from 'react-bootstrap';
+import { Nav } from 'react-bootstrap';
 
 export const ConnectMetamaskButtonComponent = () => {
   const connectWithMetamask = useMetamask();

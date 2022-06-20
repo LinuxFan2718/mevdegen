@@ -2,6 +2,7 @@ import './App.css';
 import { Container, Nav, Navbar } from 'react-bootstrap';
 import Home from './Home';
 import Arbitrage from './Arbitrage';
+import Profile from './Profile';
 import React from 'react';
 import { ConnectMetamaskButtonComponent } from './ConnectMetamaskButtonComponent';
 
@@ -11,6 +12,7 @@ class MevDegen extends React.Component {
     this.state = {current_page: 'home'};
     this.setHome = this.setHome.bind(this);
     this.setArbitrage = this.setArbitrage.bind(this);
+    this.setProfile = this.setProfile.bind(this);
   }
 
   setHome() {
@@ -25,6 +27,12 @@ class MevDegen extends React.Component {
     })
   }
 
+  setProfile() {
+    this.setState({
+      current_page: 'profile'
+    })
+  }
+
   render() {
     const current_page = this.state.current_page;
     let page;
@@ -32,6 +40,8 @@ class MevDegen extends React.Component {
       page = <Home />
     } else if (current_page === 'arbitrage') {
       page = <Arbitrage />
+    } else if (current_page === 'profile') {
+      page = <Profile />
     } else {
       page = <div>unknown page</div>
     }
@@ -46,6 +56,7 @@ class MevDegen extends React.Component {
               <Nav className="me-auto">
                 <Nav.Link onClick={this.setHome}>Home</Nav.Link>
                 <Nav.Link onClick={this.setArbitrage}>Arbitrage</Nav.Link>
+                <Nav.Link onClick={this.setProfile}>Profile</Nav.Link>
               </Nav>
               <ConnectMetamaskButtonComponent />
             </Navbar.Collapse>
