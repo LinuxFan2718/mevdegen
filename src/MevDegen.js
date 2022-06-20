@@ -3,6 +3,7 @@ import { Container, Nav, Navbar } from 'react-bootstrap';
 import Home from './Home';
 import Arbitrage from './Arbitrage';
 import React from 'react';
+import { ConnectMetamaskButtonComponent } from './ConnectMetamaskButtonComponent';
 
 class MevDegen extends React.Component {
   constructor(props) {
@@ -46,6 +47,7 @@ class MevDegen extends React.Component {
                 <Nav.Link onClick={this.setHome}>Home</Nav.Link>
                 <Nav.Link onClick={this.setArbitrage}>Arbitrage</Nav.Link>
               </Nav>
+              <ConnectMetamaskButtonComponent />
             </Navbar.Collapse>
           </Container>
         </Navbar>
