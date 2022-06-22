@@ -1,8 +1,6 @@
 import { Card, ListGroup } from 'react-bootstrap'
 
-const Profile = () => {
-  const address = 'useAddress()';
-
+const Profile = ({address}) => {
   return(
     <>
     { address ?

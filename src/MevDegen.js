@@ -3,11 +3,38 @@ import { Container, Nav, Navbar } from 'react-bootstrap';
 import Home from './Home';
 import Arbitrage from './Arbitrage';
 import Profile from './Profile';
-import { ConnectMetamaskButtonComponent } from './ConnectMetamaskButtonComponent';
 import React, { useEffect, useState } from 'react';
 import { ethers } from "ethers";
 
 const MevDegen = () => {
+  const [currentAccount, setCurrentAccount] = useState("");
+  const connectWallet = async () => {
+    try {
+      const { ethereum } = window;
+      if (!ethereum) {
+        alert("get metamask plz");
+        return;
+      }
+      const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+      setCurrentAccount(accounts[0]);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const disconnectWallet = async () => {
+    try {
+      const { ethereum } = window;
+      if (!ethereum) {
+        alert("get metamask plz");
+        return;
+      }
+      setCurrentAccount("");
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   const [currentPage, setCurrentPage] = useState('home')
   let page = <Home />;
   if (currentPage === 'home') {
@@ -15,7 +42,7 @@ const MevDegen = () => {
   } else if (currentPage === 'arbitrage') {
     page = <Arbitrage />;
   } else if (currentPage === 'profile') {
-    page = <Profile />;
+    page = <Profile address={currentAccount} />;
   } else {
     page = <>invalid page</>;
   }
@@ -42,7 +69,16 @@ const MevDegen = () => {
               <Nav.Link onClick={setCurrentPageArbitrage}>Arbitrage</Nav.Link>
               <Nav.Link onClick={setCurrentPageProfile}>Profile</Nav.Link>
             </Nav>
-            <ConnectMetamaskButtonComponent />
+            {currentAccount && (
+              <Nav.Link as="button" onClick={disconnectWallet}>
+                Disconnect {currentAccount.substring(0,6)}...
+              </Nav.Link>
+            )}
+            {!currentAccount && (
+              <Nav.Link as="button" onClick={connectWallet}>
+                Connect Metamask Wallet
+              </Nav.Link>
+            )}
           </Navbar.Collapse>
         </Container>
       </Navbar>
