@@ -1,13 +1,7 @@
 import { Card, ListGroup } from 'react-bootstrap'
-import { useAddress, useNetwork } from "@thirdweb-dev/react";
 
 const Profile = () => {
-  const address = useAddress();
-  const [
-    {
-      data: { chain }
-    }
-  ] = useNetwork();
+  const address = 'useAddress()';
 
   return(
     <>
@@ -16,7 +10,7 @@ const Profile = () => {
         <Card className="profile">
           <ListGroup variant="flush">
             <ListGroup.Item><strong>Wallet</strong> {address}</ListGroup.Item>
-            <ListGroup.Item><strong>Chain Name</strong> {chain.name}</ListGroup.Item>
+            <ListGroup.Item><strong>Chain Name</strong> {'chain.name'}</ListGroup.Item>
           </ListGroup>
         </Card>
       ) : (

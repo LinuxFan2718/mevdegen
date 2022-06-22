@@ -3,69 +3,52 @@ import { Container, Nav, Navbar } from 'react-bootstrap';
 import Home from './Home';
 import Arbitrage from './Arbitrage';
 import Profile from './Profile';
-import React from 'react';
 import { ConnectMetamaskButtonComponent } from './ConnectMetamaskButtonComponent';
+import React, { useEffect, useState } from 'react';
+import { ethers } from "ethers";
 
-class MevDegen extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {current_page: 'home'};
-    this.setHome = this.setHome.bind(this);
-    this.setArbitrage = this.setArbitrage.bind(this);
-    this.setProfile = this.setProfile.bind(this);
+const MevDegen = () => {
+  const [currentPage, setCurrentPage] = useState('home')
+  let page = <Home />;
+  if (currentPage === 'home') {
+    page = <Home />;
+  } else if (currentPage === 'arbitrage') {
+    page = <Arbitrage />;
+  } else if (currentPage === 'profile') {
+    page = <Profile />;
+  } else {
+    page = <>invalid page</>;
   }
 
-  setHome() {
-    this.setState({
-      current_page: 'home'
-    })
+  const setCurrentPageHome = () => {
+    setCurrentPage('home');
+  }
+  const setCurrentPageArbitrage = () => {
+    setCurrentPage('arbitrage');
+  }
+  const setCurrentPageProfile = () => {
+    setCurrentPage('profile');
   }
 
-  setArbitrage() {
-    this.setState({
-      current_page: 'arbitrage'
-    })
-  }
-
-  setProfile() {
-    this.setState({
-      current_page: 'profile'
-    })
-  }
-
-  render() {
-    const current_page = this.state.current_page;
-    let page;
-    if (current_page === 'home') {
-      page = <Home />
-    } else if (current_page === 'arbitrage') {
-      page = <Arbitrage />
-    } else if (current_page === 'profile') {
-      page = <Profile />
-    } else {
-      page = <div>unknown page</div>
-    }
-
-    return (
-      <div className="App">
-        <Navbar bg="light" expand="lg">
-          <Container>
-            <Navbar.Brand onClick={this.setHome}>🤖 MEV Degen</Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="me-auto">
-                <Nav.Link onClick={this.setHome}>Home</Nav.Link>
-                <Nav.Link onClick={this.setArbitrage}>Arbitrage</Nav.Link>
-                <Nav.Link onClick={this.setProfile}>Profile</Nav.Link>
-              </Nav>
-              <ConnectMetamaskButtonComponent />
-            </Navbar.Collapse>
-          </Container>
-        </Navbar>
-        {page}
-      </div>
-    );
-  }
-}
+  return (
+    <div className="App">
+      <Navbar bg="light" expand="lg">
+        <Container>
+          <Navbar.Brand onClick={setCurrentPageHome}>🤖 MEV Degen</Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="me-auto">
+              <Nav.Link onClick={setCurrentPageHome}>Home</Nav.Link>
+              <Nav.Link onClick={setCurrentPageArbitrage}>Arbitrage</Nav.Link>
+              <Nav.Link onClick={setCurrentPageProfile}>Profile</Nav.Link>
+            </Nav>
+            <ConnectMetamaskButtonComponent />
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+      {page}
+    </div>
+  );
+};
 
 export default MevDegen;

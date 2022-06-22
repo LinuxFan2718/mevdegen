@@ -1,9 +1,11 @@
 import { Card } from 'react-bootstrap';
-import { useAddress } from "@thirdweb-dev/react";
+import abi from './utils/IUniswapV2Factory.json'
 
 function Arbitrage() {
-  const address = useAddress();
-
+  const address = 'useAddress()'
+  const quickswap_factory_contract_address = '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32';
+  const quickswap_factory_contract_abi = abi.abi;
+  
   return(
     <>
       <Card>

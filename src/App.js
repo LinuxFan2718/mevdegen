@@ -1,16 +1,10 @@
-import React from 'react';
 import MevDegen from './MevDegen';
-import { ChainId, ThirdwebProvider } from "@thirdweb-dev/react";
+import React from "react";
 
-class App extends React.Component {
-
-  render() {
-    return (
-      <ThirdwebProvider desiredChainId={ChainId.polygonMainnet}>
-        <MevDegen />
-      </ThirdwebProvider>
-    );
-  }
+const App = () => {
+  return (
+    <MevDegen />
+  );
 }
 
 export default App;
