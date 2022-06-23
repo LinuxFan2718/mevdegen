@@ -3,8 +3,7 @@ import { Container, Nav, Navbar } from 'react-bootstrap';
 import Home from './Home';
 import Arbitrage from './Arbitrage';
 import Profile from './Profile';
-import React, { useEffect, useState } from 'react';
-import { ethers } from "ethers";
+import React, { useState } from 'react';
 
 const MevDegen = () => {
   const [currentAccount, setCurrentAccount] = useState("");
@@ -40,7 +39,7 @@ const MevDegen = () => {
   if (currentPage === 'home') {
     page = <Home />;
   } else if (currentPage === 'arbitrage') {
-    page = <Arbitrage />;
+    page = <Arbitrage address={currentAccount} />;
   } else if (currentPage === 'profile') {
     page = <Profile address={currentAccount} />;
   } else {

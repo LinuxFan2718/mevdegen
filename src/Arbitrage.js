@@ -1,10 +1,45 @@
 import { Card } from 'react-bootstrap';
-import abi from './utils/IUniswapV2Factory.json'
+import React, { useEffect, useState } from 'react';
+// import factoryAbi from './utils/IUniswapV2Factory.json'
+import pairAbi from './utils/IUniswapV2Pair.json'
+import { ethers } from "ethers";
 
-function Arbitrage() {
-  const address = 'useAddress()'
-  const quickswap_factory_contract_address = '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32';
-  const quickswap_factory_contract_abi = abi.abi;
+function Arbitrage({address}) {
+  //   const quickswap_factory_contract_address = '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32';
+  //   const quickswap_factory_contract_abi = factoryAbi.abi;
+  const [reserves, setReserves] = useState(['loading...', 'loading...', 'loading...']);
+
+  const quickswap_pair_usdc_usdt_address = '0x2cF7252e74036d1Da831d11089D326296e64a728';
+  const quickswap_pair_abi = pairAbi.abi;
+
+  useEffect(() => {
+    getReserves();
+  }, [])
+
+  const getReserves = async () => {
+    try {
+      const { ethereum } = window;
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const quickswapPairContract = new ethers.Contract(
+          quickswap_pair_usdc_usdt_address,
+          quickswap_pair_abi,
+          signer);
+
+        const result = await quickswapPairContract.getReserves();
+        const reserve0 = result.reserve0;
+        const reserve1 = result.reserve1;
+        const ratio = reserve0.toNumber() / reserve1.toNumber();
+
+        setReserves([reserve0, reserve1, ratio]);
+      } else {
+        console.log("Ethereum object doesn't exist!")
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
   
   return(
     <>
@@ -23,11 +58,13 @@ function Arbitrage() {
           <Card.Body>
           <Card.Title>Quickswap</Card.Title>
             <Card.Text>
-              price here
+              USDC reserves {reserves[0].toString()}
             </Card.Text>
-            <Card.Title>Uniswap V2</Card.Title>
             <Card.Text>
-              price2 here
+              USDT reserves {reserves[1].toString()}
+            </Card.Text>
+            <Card.Text>
+              USDC / USDT = {reserves[2]}
             </Card.Text>
           </Card.Body>
         </Card>
