@@ -8,18 +8,17 @@ function Arbitrage({address}) {
   //   const quickswap_factory_contract_address = '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32';
   //   const quickswap_factory_contract_abi = factoryAbi.abi;
   const [reserves, setReserves] = useState(['loading...', 'loading...', 'loading...']);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(0);
 
   const quickswap_pair_usdc_usdt_address = '0x2cF7252e74036d1Da831d11089D326296e64a728';
   const quickswap_base_url = "https://info.quickswap.exchange/#/pair/"
 
   const triggerLoading = () => {
-    setLoading(true);
+    setLoading(loading+1);
   }
 
   useEffect(() => {
     const quickswap_pair_abi = pairAbi.abi;
-    setLoading(false);
     const getReserves = async () => {
       try {
         const { ethereum } = window;
