@@ -7,7 +7,7 @@ import { ethers } from "ethers";
 function Arbitrage({address}) {
   //   const quickswap_factory_contract_address = '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32';
   //   const quickswap_factory_contract_abi = factoryAbi.abi;
-  const [reserves, setReserves] = useState(['loading...', 'loading...', 'loading...']);
+  const [reserves, setReserves] = useState(['loading...', 'loading...', 'loading...', 'loading...']);
   const [loading, setLoading] = useState(0);
 
   const quickswap_pair_usdc_usdt_address = '0x2cF7252e74036d1Da831d11089D326296e64a728';
@@ -30,13 +30,18 @@ function Arbitrage({address}) {
             quickswap_pair_abi,
             signer);
   
-          const result = await quickswapPairContract.getReserves();
-          const reserve0 = result.reserve0;
-          const reserve1 = result.reserve1;
+          const getReservesResult = await quickswapPairContract.getReserves();
+          const reserve0 = getReservesResult.reserve0;
+          const reserve1 = getReservesResult.reserve1;
           const ratio = reserve0.toNumber() / reserve1.toNumber();
-          console.log("ratio", ratio)
+          const productK = reserve0.mul(reserve1).toString();
+
+          const kLastResult = await quickswapPairContract.kLast();
+          const kLast = kLastResult.toString();
+
+
   
-          setReserves([reserve0, reserve1, ratio]);
+          setReserves([reserve0, reserve1, ratio, kLast, productK]);
         } else {
           console.log("Ethereum object doesn't exist!")
         }
@@ -72,6 +77,15 @@ function Arbitrage({address}) {
             </Card.Text>
             <Card.Text>
               USDC / USDT = {reserves[2]}
+            </Card.Text>
+            <Card.Text>
+              k = {reserves[3]}
+            </Card.Text>
+            <Card.Text>
+              x * y = {reserves[4]}
+            </Card.Text>
+            <Card.Text>
+              k - x * y = {reserves[3] - reserves[4]}
             </Card.Text>
             <Button onClick={triggerLoading}>Refresh</Button>
           </Card.Body>
