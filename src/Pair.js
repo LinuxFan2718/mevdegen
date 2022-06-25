@@ -1,4 +1,4 @@
-import { Button, Card, Table } from 'react-bootstrap';
+import { Button, Table } from 'react-bootstrap';
 import React, { useEffect, useState } from 'react';
 import pairAbi from './utils/IUniswapV2Pair.json'
 import { ethers } from "ethers";
@@ -20,7 +20,6 @@ function Pair() {
   // shared between exchange 1 and 2
   const token0 = 'USDC';
   const token1 = 'USDT';
-  const pair_name = token0 + '-' + token1;
   
   const triggerLoading = () => {
     setLoading(loading+1);
