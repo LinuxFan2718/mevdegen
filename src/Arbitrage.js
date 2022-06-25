@@ -8,9 +8,9 @@ function Arbitrage({address}) {
       <Card>
         <Card.Header as="h5">Arbitrage</Card.Header>
         <Card.Body>
-          <Card.Title>Uniswap V2 DEX's</Card.Title>
+          <Card.Title> Price comparison between Uniswap V2 clones</Card.Title>
           <Card.Text>
-            Arbitrage in MEV is taking advantage of price mismatches between decentralized exchanges to make riskless profit.
+            Use this page to search for arbitrage opportunities between Uniswap V2 clones on Polygon.
           </Card.Text>
         </Card.Body>
       </Card>
