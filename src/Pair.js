@@ -4,12 +4,23 @@ import pairAbi from './utils/IUniswapV2Pair.json'
 import { ethers } from "ethers";
 
 function Pair() {
-  const [reserves, setReserves] = useState(['loading...', 'loading...', 'loading...', 'loading...']);
+  const [reservesEx1, setReservesEx1] = useState(['loading...', 'loading...', 'loading...', 'loading...']);
   const [loading, setLoading] = useState(0);
-
-  const quickswap_pair_usdc_usdt_address = '0x2cF7252e74036d1Da831d11089D326296e64a728';
-  const quickswap_base_url = "https://info.quickswap.exchange/#/pair/"
-
+  // exchange1 = quickswap
+  const exchange1_pair_address = '0x2cF7252e74036d1Da831d11089D326296e64a728';
+  const exchange1_base_url = "https://info.quickswap.exchange/#/pair/";
+  const exchange1_params = "";
+  const exchange1_name = 'Quickswap';
+  // exchange2 = sushiswap
+  const exchange2_pair_address = '0x4b1f1e2435a9c96f7330faea190ef6a7c8d70001';
+  const exchange2_base_url = "https://app.sushi.com/analytics/pools/"
+  const exchange2_params = "?chainId=137";
+  const exchange2_name = 'Sushiswap';
+  // shared between exchange 1 and 2
+  const token0 = 'USDC';
+  const token1 = 'USDT';
+  const pair_name = token0 + '-' + token1;
+  
   const triggerLoading = () => {
     setLoading(loading+1);
   }
@@ -23,7 +34,7 @@ function Pair() {
           const provider = new ethers.providers.Web3Provider(ethereum);
           const signer = provider.getSigner();
           const quickswapPairContract = new ethers.Contract(
-            quickswap_pair_usdc_usdt_address,
+            exchange1_pair_address,
             quickswap_pair_abi,
             signer);
   
@@ -36,7 +47,7 @@ function Pair() {
           const kLastResult = await quickswapPairContract.kLast();
           const kLast = kLastResult.toString();
 
-          setReserves([reserve0, reserve1, ratio, kLast, productK]);
+          setReservesEx1([reserve0, reserve1, ratio, kLast, productK]);
         } else {
           console.log("Ethereum object doesn't exist!")
         }
@@ -50,26 +61,26 @@ function Pair() {
 
   return(
     <Card>
-      <Card.Header as="h5">USDC-USDT</Card.Header>
+      <Card.Header as="h5">{pair_name}</Card.Header>
       <Card.Body>
-      <Card.Title><Button href={quickswap_base_url+quickswap_pair_usdc_usdt_address}>Quickswap</Button></Card.Title>
+      <Card.Title><Button href={exchange1_base_url+exchange1_pair_address+exchange1_params}>{exchange1_name}</Button></Card.Title>
         <Card.Text>
-          USDC reserves {reserves[0].toString()}
+         {token0} {reservesEx1[0].toString()}
         </Card.Text>
         <Card.Text>
-          USDT reserves {reserves[1].toString()}
+          {token1} {reservesEx1[1].toString()}
         </Card.Text>
         <Card.Text>
-          USDC / USDT = {reserves[2]}
+          {token0} / {token1} = {reservesEx1[2]}
         </Card.Text>
         <Card.Text>
-          k = {reserves[3]}
+          x * y= {reservesEx1[3]}
         </Card.Text>
         <Card.Text>
-          x * y = {reserves[4]}
+          last k = {reservesEx1[4]}
         </Card.Text>
         <Card.Text>
-          k - x * y = {reserves[3] - reserves[4]}
+          x * y - last k = {reservesEx1[3] - reservesEx1[4]}
         </Card.Text>
         <Button onClick={triggerLoading}>Refresh</Button>
       </Card.Body>
