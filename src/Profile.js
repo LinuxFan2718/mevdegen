@@ -6,7 +6,6 @@ const Profile = ({address}) => {
   const readChainId = async () => {
     const { ethereum } = window;
       if (!ethereum) {
-        alert("get metamask plz");
         return;
       }
     const myChainId = await ethereum.request({ method: 'eth_chainId' });
