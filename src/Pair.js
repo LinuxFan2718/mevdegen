@@ -4,6 +4,11 @@ import pairAbi from './utils/IUniswapV2Pair.json'
 import { ethers } from "ethers";
 
 function Pair() {
+  const digits = 4;
+  function roundUp(num, precision) {
+    precision = Math.pow(10, precision)
+    return Math.ceil(num * precision) / precision
+  }
   const [reservesEx1, setReservesEx1] = useState(['loading...']);
   const [reservesEx2, setReservesEx2] = useState(['loading...']);
   const [loading, setLoading] = useState(0);
@@ -76,7 +81,6 @@ function Pair() {
 
   return(
     <>
-      <strong>{token0} / {token1}</strong>
       <Table bordered>
         <thead>
           <tr>
@@ -87,18 +91,32 @@ function Pair() {
         <tbody>
           <tr>
             <td><a href={exchange1_base_url+exchange1_pair_address+exchange1_params}>{exchange1_name}</a></td>
-            <td>{reservesEx1[0]}</td>
+            <td>{roundUp(reservesEx1[0], digits)}</td>
 
           </tr>
           <tr>
             <td><a href={exchange2_base_url+exchange2_pair_address+exchange2_params}>{exchange2_name}</a></td>
-            <td>{reservesEx2[0]}</td>
+            <td>{roundUp(reservesEx2[0], digits)}</td>
 
           </tr>
           <tr style={{backgroundColor: 'antiquewhite'}}>
             <td><strong>Max Profit (before fees)</strong></td>
-            <td>${Math.abs(reservesEx1[0] - reservesEx2[0])/reservesEx1[0]}</td>
+            <td>${roundUp(Math.abs(reservesEx1[0] - reservesEx2[0])/reservesEx1[0], digits)}</td>
+          </tr>
 
+          <tr style={{backgroundColor: 'antiquewhite'}}>
+            <td><strong>Fees to trade $1000</strong></td>
+            <td>coming soon. uniswap fee, gas.</td>
+          </tr>
+
+          <tr style={{backgroundColor: 'antiquewhite'}}>
+            <td><strong>Flash loan fee for $1000</strong></td>
+            <td>coming soon.</td>
+          </tr>
+
+          <tr style={{backgroundColor: 'antiquewhite'}}>
+            <td><strong>Max Profit (after fees and gas)</strong></td>
+            <td>coming soon</td>
           </tr>
         </tbody>
       </Table>
