@@ -100,7 +100,7 @@ function Pair() {
 
           </tr>
           <tr style={{backgroundColor: 'antiquewhite'}}>
-            <td><strong>Max Profit (before fees)</strong></td>
+            <td><strong>Spread (before fees and gas)</strong></td>
             <td>${roundUp(Math.abs(reservesEx1[0] - reservesEx2[0])/reservesEx1[0], digits)}</td>
           </tr>
 
