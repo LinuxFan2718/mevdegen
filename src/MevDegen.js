@@ -70,12 +70,12 @@ const MevDegen = () => {
             </Nav>
             {currentAccount && (
               <Nav.Link as="button" onClick={disconnectWallet}>
-                Disconnect {currentAccount.substring(0,6)}...
+                🦊 Disconnect {currentAccount.substring(0,6)}...
               </Nav.Link>
             )}
             {!currentAccount && (
               <Nav.Link as="button" onClick={connectWallet}>
-                Connect Metamask Wallet
+                🦊 Connect Metamask Wallet
               </Nav.Link>
             )}
           </Navbar.Collapse>

@@ -1,4 +1,4 @@
-import { Button, Table } from 'react-bootstrap';
+import { Button, Table, Placeholder } from 'react-bootstrap';
 import React, { useEffect, useState } from 'react';
 import pairAbi from './utils/IUniswapV2Pair.json'
 import { ethers } from "ethers";
@@ -9,8 +9,8 @@ function Pair() {
     precision = Math.pow(10, precision)
     return Math.ceil(num * precision) / precision
   }
-  const [reservesEx1, setReservesEx1] = useState(['loading...']);
-  const [reservesEx2, setReservesEx2] = useState(['loading...']);
+  const [reservesEx1, setReservesEx1] = useState([null]);
+  const [reservesEx2, setReservesEx2] = useState([null]);
   const [loading, setLoading] = useState(0);
   // exchange1 = quickswap
   const exchange1_pair_address = '0x2cF7252e74036d1Da831d11089D326296e64a728';
@@ -91,32 +91,41 @@ function Pair() {
         <tbody>
           <tr>
             <td><a href={exchange1_base_url+exchange1_pair_address+exchange1_params}>{exchange1_name}</a></td>
-            <td>{roundUp(reservesEx1[0], digits)}</td>
+            <td>
+              {reservesEx1[0] && roundUp(reservesEx1[0], digits)}
+              {!reservesEx1[0] && <Placeholder animation="glow"><Placeholder xs={12} /></Placeholder>}
+            </td>
 
           </tr>
           <tr>
             <td><a href={exchange2_base_url+exchange2_pair_address+exchange2_params}>{exchange2_name}</a></td>
-            <td>{roundUp(reservesEx2[0], digits)}</td>
+            <td>
+              {reservesEx2[0] && roundUp(reservesEx2[0], digits)}
+              {!reservesEx2[0] && <Placeholder animation="glow"><Placeholder xs={12} /></Placeholder>}
+              </td>
 
           </tr>
           <tr style={{backgroundColor: 'antiquewhite'}}>
-            <td><strong>Spread (before fees and gas)</strong></td>
-            <td>${roundUp(Math.abs(reservesEx1[0] - reservesEx2[0])/reservesEx1[0], digits)}</td>
+            <td><strong>Gross Spread (before fees)</strong></td>
+            <td>
+              ${reservesEx1[0] && reservesEx2[0] && roundUp(Math.abs(reservesEx1[0] - reservesEx2[0])/reservesEx1[0], digits)}
+              {(!reservesEx1[0] || !reservesEx2[0]) && <Placeholder animation="glow"><Placeholder xs={12} /></Placeholder>}
+            </td>
           </tr>
 
-          <tr style={{backgroundColor: 'antiquewhite'}}>
+          <tr style={{backgroundColor: 'honeydew'}}>
             <td><strong>Fees to trade $1000</strong></td>
-            <td>coming soon. uniswap fee, gas.</td>
+            <td>👨‍💻 coming soon.</td>
           </tr>
 
-          <tr style={{backgroundColor: 'antiquewhite'}}>
+          <tr style={{backgroundColor: 'honeydew'}}>
             <td><strong>Flash loan fee for $1000</strong></td>
-            <td>coming soon.</td>
+            <td>👨‍💻 coming soon.</td>
           </tr>
 
-          <tr style={{backgroundColor: 'antiquewhite'}}>
+          <tr style={{backgroundColor: 'honeydew'}}>
             <td><strong>Max Profit (after fees and gas)</strong></td>
-            <td>coming soon</td>
+            <td>👨‍💻 coming soon</td>
           </tr>
         </tbody>
       </Table>
