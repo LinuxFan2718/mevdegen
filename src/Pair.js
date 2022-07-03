@@ -23,10 +23,28 @@ function Pair() {
     return dy;
   }
 
+  function dxAnswer(dy, reservesEx) {
+    console.log("dy", dy)
+    console.log("reserveEx", reservesEx)
+    const xbignum = reservesEx["x"];
+    const ybignum = reservesEx["y"];
+    if (!xbignum || !ybignum) {
+      return null;
+    }
+    const x = xbignum.toNumber();
+    const y = ybignum.toNumber();
+    console.log("x,y", x, y)
+    const dx = (x * dy) / (y + dy);
+    console.log("dx", dx)
+    return dx;
+  }
+
   const [reservesEx1, setReservesEx1] = useState({});
   const [reservesEx2, setReservesEx2] = useState([null]);
   const [numToken0, setNumToken0] = useState(1000);
   const [loading, setLoading] = useState(0);
+  const [stepOne, setStepOne] = useState(0);
+  const [stepTwo, setStepTwo] = useState(0);
   // exchange1 = quickswap
   const exchange1_pair_address = '0x2cF7252e74036d1Da831d11089D326296e64a728';
   const exchange1_base_url = "https://info.quickswap.exchange/#/pair/";
@@ -82,13 +100,21 @@ function Pair() {
   
           const getReserves2Result = await exchange2PairContract.getReserves();
 
-          const reserve0ex2 = getReserves2Result.reserve0;
-          const reserve1ex2 = getReserves2Result.reserve1;
-          const ratio01Ex2 = reserve0ex2.toNumber() / reserve1ex2.toNumber();
+          const xex2 = getReserves2Result.reserve0;
+          const yex2 = getReserves2Result.reserve1;
+          const xoveryex2 = xex2.toNumber() / yex2.toNumber();
 
-          setReservesEx2([ratio01Ex2]);          
-
+          setReservesEx2(
+            {
+              "x": xex2,
+              "y": yex2,
+              "xovery": xoveryex2
+            }
+          );   
           
+          setStepOne(dyAnswer(numToken0, reservesEx1));
+          setStepTwo(dxAnswer(stepOne, reservesEx2));
+
         } else {
           console.log("Ethereum object doesn't exist!")
         }
@@ -98,7 +124,7 @@ function Pair() {
     }
 
     getReserves();
-  }, [loading])
+  }, [loading, numToken0, stepTwo])
 
   return(
     <>
@@ -121,22 +147,39 @@ function Pair() {
           <tr>
             <td><a href={exchange2_base_url+exchange2_pair_address+exchange2_params}>{exchange2_name}</a></td>
             <td>
-              {reservesEx2[0] && roundUp(reservesEx2[0], digits)}
-              {!reservesEx2[0] && <Placeholder animation="glow"><Placeholder xs={12} /></Placeholder>}
-              </td>
+              {reservesEx2["xovery"] && roundUp(reservesEx2["xovery"], digits)}
+              {!reservesEx2["xovery"] && <Placeholder animation="glow"><Placeholder xs={12} /></Placeholder>}
+            </td>
+          </tr>
 
+          <tr>
+            <td colSpan={2}><strong>Before fees</strong></td>
           </tr>
           <tr style={{backgroundColor: 'antiquewhite'}}>
-            <td><strong>Gross Spread (before fees)</strong></td>
+            <td><strong>Gross Spread</strong></td>
             <td>
-              ${reservesEx1["xovery"] && reservesEx2[0] && roundUp(Math.abs(reservesEx1["xovery"] - reservesEx2[0])/reservesEx1["xovery"], digits)}
-              {(!reservesEx1["xovery"] || !reservesEx2[0]) && <Placeholder animation="glow"><Placeholder xs={12} /></Placeholder>}
+              ${reservesEx1["xovery"] && reservesEx2["xovery"] && roundUp(Math.abs(reservesEx1["xovery"] - reservesEx2["xovery"])/reservesEx1["xovery"], digits)}
+              {(!reservesEx1["xovery"] || !reservesEx2["xovery"]) && <Placeholder animation="glow"><Placeholder xs={12} /></Placeholder>}
             </td>
           </tr>
 
           <tr style={{backgroundColor: 'honeydew'}}>
-            <td><strong>{numToken0} {token1} nets (before fees)</strong></td>
-            <td>{roundUp(dyAnswer(numToken0, reservesEx1), digits)} {token0}</td>
+            <td><strong>{numToken0} {token0} nets</strong></td>
+            <td>{roundUp(stepOne, digits)} {token1}</td>
+          </tr>
+
+          <tr style={{backgroundColor: 'honeydew'}}>
+            <td><strong>{roundUp(stepOne, digits)} {token1} nets</strong></td>
+            <td>{roundUp(stepTwo, digits)} {token0}</td>
+          </tr>
+
+          <tr style={{backgroundColor: 'honeydew'}}>
+            <td>Trade profit/loss</td>
+            <td>{roundUp(numToken0 - stepTwo, digits)} {token0}</td>
+          </tr>
+
+          <tr>
+            <td colSpan={2}><strong>With fees</strong></td>
           </tr>
 
           <tr style={{backgroundColor: 'honeydew'}}>
