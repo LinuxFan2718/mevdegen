@@ -9,6 +9,14 @@ function Pair() {
     precision = Math.pow(10, precision)
     return Math.ceil(num * precision) / precision
   }
+
+  function tokensReturnedFor(numToken0) {
+    if (!reservesEx1 && !reservesEx2) {
+      return null
+    }
+    return (reservesEx2 * numToken0) / (reservesEx1 + numToken0)
+    
+  }
   const [reservesEx1, setReservesEx1] = useState([null]);
   const [reservesEx2, setReservesEx2] = useState([null]);
   const [loading, setLoading] = useState(0);
@@ -111,6 +119,11 @@ function Pair() {
               ${reservesEx1[0] && reservesEx2[0] && roundUp(Math.abs(reservesEx1[0] - reservesEx2[0])/reservesEx1[0], digits)}
               {(!reservesEx1[0] || !reservesEx2[0]) && <Placeholder animation="glow"><Placeholder xs={12} /></Placeholder>}
             </td>
+          </tr>
+
+          <tr style={{backgroundColor: 'honeydew'}}>
+            <td><strong>1000 {token1} nets (before fees)</strong></td>
+            <td>{roundUp(tokensReturnedFor(1000), digits)} {token0}</td>
           </tr>
 
           <tr style={{backgroundColor: 'honeydew'}}>
