@@ -10,15 +10,22 @@ function Pair() {
     return Math.ceil(num * precision) / precision
   }
 
-  function tokensReturnedFor(numToken0) {
-    if (!reservesEx1 && !reservesEx2) {
-      return null
+  // X = ex1. Y = ex2
+  function tokensReturnedFor(dx, reservesEx) {
+    const xbignum = reservesEx["x"];
+    const ybignum = reservesEx["y"];
+    if (!xbignum || !ybignum) {
+      return null;
     }
-    return (reservesEx2 * numToken0) / (reservesEx1 + numToken0)
+    const x = xbignum.toNumber();
+    const y = ybignum.toNumber();
+    const dy = (y * dx) / (x + dx);
+    return dy;
     
   }
-  const [reservesEx1, setReservesEx1] = useState([null]);
+  const [reservesEx1, setReservesEx1] = useState({});
   const [reservesEx2, setReservesEx2] = useState([null]);
+  const [numToken0, setNumToken0] = useState(1000);
   const [loading, setLoading] = useState(0);
   // exchange1 = quickswap
   const exchange1_pair_address = '0x2cF7252e74036d1Da831d11089D326296e64a728';
@@ -55,11 +62,17 @@ function Pair() {
   
           const getReserves1Result = await exchange1PairContract.getReserves();
 
-          const reserve0ex1 = getReserves1Result.reserve0;
-          const reserve1ex1 = getReserves1Result.reserve1;
-          const ratio01Ex1 = reserve0ex1.toNumber() / reserve1ex1.toNumber();
+          const xex1 = getReserves1Result.reserve0;
+          const yex1 = getReserves1Result.reserve1;
+          const xoveryex1 = xex1.toNumber() / yex1.toNumber();
 
-          setReservesEx1([ratio01Ex1]);
+          setReservesEx1(
+            {
+              "x": xex1,
+              "y": yex1,
+              "xovery": xoveryex1
+            }
+          );
 
           // exchange 2
           const exchange2PairContract = new ethers.Contract(
@@ -100,8 +113,8 @@ function Pair() {
           <tr>
             <td><a href={exchange1_base_url+exchange1_pair_address+exchange1_params}>{exchange1_name}</a></td>
             <td>
-              {reservesEx1[0] && roundUp(reservesEx1[0], digits)}
-              {!reservesEx1[0] && <Placeholder animation="glow"><Placeholder xs={12} /></Placeholder>}
+              {reservesEx1["xovery"] && roundUp(reservesEx1["xovery"], digits)}
+              {!reservesEx1["xovery"] && <Placeholder animation="glow"><Placeholder xs={12} /></Placeholder>}
             </td>
 
           </tr>
@@ -116,14 +129,14 @@ function Pair() {
           <tr style={{backgroundColor: 'antiquewhite'}}>
             <td><strong>Gross Spread (before fees)</strong></td>
             <td>
-              ${reservesEx1[0] && reservesEx2[0] && roundUp(Math.abs(reservesEx1[0] - reservesEx2[0])/reservesEx1[0], digits)}
-              {(!reservesEx1[0] || !reservesEx2[0]) && <Placeholder animation="glow"><Placeholder xs={12} /></Placeholder>}
+              ${reservesEx1["xovery"] && reservesEx2[0] && roundUp(Math.abs(reservesEx1["xovery"] - reservesEx2[0])/reservesEx1["xovery"], digits)}
+              {(!reservesEx1["xovery"] || !reservesEx2[0]) && <Placeholder animation="glow"><Placeholder xs={12} /></Placeholder>}
             </td>
           </tr>
 
           <tr style={{backgroundColor: 'honeydew'}}>
-            <td><strong>1000 {token1} nets (before fees)</strong></td>
-            <td>{roundUp(tokensReturnedFor(1000), digits)} {token0}</td>
+            <td><strong>{numToken0} {token1} nets (before fees)</strong></td>
+            <td>{roundUp(tokensReturnedFor(numToken0, reservesEx1), digits)} {token0}</td>
           </tr>
 
           <tr style={{backgroundColor: 'honeydew'}}>
