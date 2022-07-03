@@ -11,7 +11,7 @@ function Pair() {
   }
 
   // X = ex1. Y = ex2
-  function tokensReturnedFor(dx, reservesEx) {
+  function dyAnswer(dx, reservesEx) {
     const xbignum = reservesEx["x"];
     const ybignum = reservesEx["y"];
     if (!xbignum || !ybignum) {
@@ -21,8 +21,8 @@ function Pair() {
     const y = ybignum.toNumber();
     const dy = (y * dx) / (x + dx);
     return dy;
-    
   }
+
   const [reservesEx1, setReservesEx1] = useState({});
   const [reservesEx2, setReservesEx2] = useState([null]);
   const [numToken0, setNumToken0] = useState(1000);
@@ -136,7 +136,7 @@ function Pair() {
 
           <tr style={{backgroundColor: 'honeydew'}}>
             <td><strong>{numToken0} {token1} nets (before fees)</strong></td>
-            <td>{roundUp(tokensReturnedFor(numToken0, reservesEx1), digits)} {token0}</td>
+            <td>{roundUp(dyAnswer(numToken0, reservesEx1), digits)} {token0}</td>
           </tr>
 
           <tr style={{backgroundColor: 'honeydew'}}>
