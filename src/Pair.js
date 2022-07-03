@@ -24,8 +24,6 @@ function Pair() {
   }
 
   function dxAnswer(dy, reservesEx) {
-    console.log("dy", dy)
-    console.log("reserveEx", reservesEx)
     const xbignum = reservesEx["x"];
     const ybignum = reservesEx["y"];
     if (!xbignum || !ybignum) {
@@ -33,9 +31,7 @@ function Pair() {
     }
     const x = xbignum.toNumber();
     const y = ybignum.toNumber();
-    console.log("x,y", x, y)
     const dx = (x * dy) / (y + dy);
-    console.log("dx", dx)
     return dx;
   }
 
@@ -45,6 +41,17 @@ function Pair() {
   const [loading, setLoading] = useState(0);
   const [stepOne, setStepOne] = useState(0);
   const [stepTwo, setStepTwo] = useState(0);
+
+  const onChangeNumToken0 = (event) => {
+    const localNumToken0string = event.target.value;
+    const localNumToken0 = Number(localNumToken0string);
+    setNumToken0(localNumToken0);
+    const localStepOne = dyAnswer(localNumToken0, reservesEx1);
+    setStepOne(localStepOne);
+    const localStepTwo = dxAnswer(localStepOne, reservesEx2);
+    setStepTwo(localStepTwo);
+  };
+
   // exchange1 = quickswap
   const exchange1_pair_address = '0x2cF7252e74036d1Da831d11089D326296e64a728';
   const exchange1_base_url = "https://info.quickswap.exchange/#/pair/";
@@ -64,6 +71,7 @@ function Pair() {
   }
 
   useEffect(() => {
+    console.log('useEffect triggered');
     const pair_abi = pairAbi.abi;
     const getReserves = async () => {
       try {
@@ -124,7 +132,7 @@ function Pair() {
     }
 
     getReserves();
-  }, [loading, numToken0, stepTwo])
+  }, [loading, numToken0, stepOne, stepTwo])
 
   return(
     <>
@@ -163,6 +171,13 @@ function Pair() {
             </td>
           </tr>
 
+          <tr>
+            <td>input number {token0} to buy</td>
+            <td>
+              <input value={numToken0} onChange={onChangeNumToken0} />
+            </td>
+          </tr>
+
           <tr style={{backgroundColor: 'honeydew'}}>
             <td><strong>{numToken0} {token0} nets</strong></td>
             <td>{roundUp(stepOne, digits)} {token1}</td>
@@ -175,7 +190,7 @@ function Pair() {
 
           <tr style={{backgroundColor: 'honeydew'}}>
             <td>Trade profit/loss</td>
-            <td>{roundUp(numToken0 - stepTwo, digits)} {token0}</td>
+            <td>{roundUp(stepTwo - numToken0, digits)} {token0}</td>
           </tr>
 
           <tr>
