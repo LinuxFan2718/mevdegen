@@ -160,15 +160,16 @@ function Pair() {
             </td>
           </tr>
 
-          <tr>
-            <td colSpan={2}><strong>Before fees</strong></td>
-          </tr>
           <tr style={{backgroundColor: 'antiquewhite'}}>
-            <td><strong>Gross Spread</strong></td>
+            <td>Gross Spread</td>
             <td>
-              ${reservesEx1["xovery"] && reservesEx2["xovery"] && roundUp(Math.abs(reservesEx1["xovery"] - reservesEx2["xovery"])/reservesEx1["xovery"], digits)}
+              {reservesEx1["xovery"] && reservesEx2["xovery"] && roundUp(Math.abs(reservesEx1["xovery"] - reservesEx2["xovery"])/reservesEx1["xovery"], digits)}
               {(!reservesEx1["xovery"] || !reservesEx2["xovery"]) && <Placeholder animation="glow"><Placeholder xs={12} /></Placeholder>}
             </td>
+          </tr>
+
+          <tr>
+            <td colSpan={2}><strong>Before fees</strong></td>
           </tr>
 
           <tr>
@@ -197,20 +198,11 @@ function Pair() {
             <td colSpan={2}><strong>With fees</strong></td>
           </tr>
 
-          <tr style={{backgroundColor: 'honeydew'}}>
-            <td><strong>Fees to trade $1000</strong></td>
-            <td>👨‍💻 coming soon.</td>
+          <tr style={{backgroundColor: 'lightcoral'}}>
+
+            <td colSpan={2}>👨‍💻 coming soon.</td>
           </tr>
 
-          <tr style={{backgroundColor: 'honeydew'}}>
-            <td><strong>Flash loan fee for $1000</strong></td>
-            <td>👨‍💻 coming soon.</td>
-          </tr>
-
-          <tr style={{backgroundColor: 'honeydew'}}>
-            <td><strong>Max Profit (after fees and gas)</strong></td>
-            <td>👨‍💻 coming soon</td>
-          </tr>
         </tbody>
       </Table>
       <Button onClick={triggerLoading}>Refresh {token0} / {token1}</Button>
