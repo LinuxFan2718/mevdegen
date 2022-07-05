@@ -37,18 +37,34 @@ function Pair() {
 
   const [reservesEx1, setReservesEx1] = useState({});
   const [reservesEx2, setReservesEx2] = useState([null]);
-  const [numToken0, setNumToken0] = useState(1000);
+  const [grossNumToken0, setGrossNumToken0] = useState(1000);
+  const [netNumToken0, setNetNumToken0] = useState(997);
+  const [liquidityProviderFee1, setLiquidityProviderFee1] = useState(3);
+  const [liquidityProviderFee2, setLiquidityProviderFee2] = useState(2.99);
   const [loading, setLoading] = useState(0);
   const [stepOne, setStepOne] = useState(0);
+  const [stepOneNetFee, setStepOneNetFee] = useState(0);
   const [stepTwo, setStepTwo] = useState(0);
 
   const onChangeNumToken0 = (event) => {
-    const localNumToken0string = event.target.value;
-    const localNumToken0 = Number(localNumToken0string);
-    setNumToken0(localNumToken0);
-    const localStepOne = dyAnswer(localNumToken0, reservesEx1);
+    const localGrossNumToken0string = event.target.value;
+    const localGrossNumToken0 = Number(localGrossNumToken0string);
+    updatePrices(localGrossNumToken0);
+  };
+
+  const updatePrices = (localGrossNumToken0) => {
+    const localLiquidityProviderFee1 = localGrossNumToken0 * 0.003;
+    setLiquidityProviderFee1(localLiquidityProviderFee1);
+    const localNetNumToken0 = localGrossNumToken0 - localLiquidityProviderFee1;
+    setGrossNumToken0(localGrossNumToken0);
+    setNetNumToken0(localNetNumToken0);
+    const localStepOne = dyAnswer(localNetNumToken0, reservesEx1);
     setStepOne(localStepOne);
-    const localStepTwo = dxAnswer(localStepOne, reservesEx2);
+    const localLiquidityProviderFee2 = localStepOne * 0.003;
+    setLiquidityProviderFee2(localLiquidityProviderFee2);
+    const localStepOneNetFee = localStepOne - localLiquidityProviderFee2;
+    setStepOneNetFee(localStepOneNetFee);
+    const localStepTwo = dxAnswer(localStepOneNetFee, reservesEx2);
     setStepTwo(localStepTwo);
   };
 
@@ -120,8 +136,7 @@ function Pair() {
             }
           );   
           
-          setStepOne(dyAnswer(numToken0, reservesEx1));
-          setStepTwo(dxAnswer(stepOne, reservesEx2));
+          updatePrices(grossNumToken0);
 
         } else {
           console.log("Ethereum object doesn't exist!")
@@ -132,7 +147,7 @@ function Pair() {
     }
 
     getReserves();
-  }, [loading, numToken0, stepOne, stepTwo])
+  }, [loading, grossNumToken0])
 
   return(
     <>
@@ -161,7 +176,7 @@ function Pair() {
           </tr>
 
           <tr style={{backgroundColor: 'antiquewhite'}}>
-            <td>Gross Spread</td>
+            <td>Spread</td>
             <td>
               {reservesEx1["xovery"] && reservesEx2["xovery"] && roundUp(Math.abs(reservesEx1["xovery"] - reservesEx2["xovery"])/reservesEx1["xovery"], digits)}
               {(!reservesEx1["xovery"] || !reservesEx2["xovery"]) && <Placeholder animation="glow"><Placeholder xs={12} /></Placeholder>}
@@ -169,39 +184,47 @@ function Pair() {
           </tr>
 
           <tr>
-            <td colSpan={2}><strong>Before fees</strong></td>
+            <td colSpan={2}><strong>Arbitrage calculator</strong></td>
           </tr>
 
           <tr>
-            <td>input number {token0} to buy</td>
+            <td>Number of {token0} to buy</td>
             <td>
-              <input value={numToken0} onChange={onChangeNumToken0} />
+              <input value={grossNumToken0} onChange={onChangeNumToken0} />
             </td>
           </tr>
 
           <tr style={{backgroundColor: 'honeydew'}}>
-            <td><strong>{numToken0} {token0} nets</strong></td>
+            <td>Liquidity Provider Fee 1</td>
+            <td>{roundUp(liquidityProviderFee1, digits)} {token0}</td>
+          </tr>
+
+          <tr style={{backgroundColor: 'honeydew'}}>
+            <td>Net {token0} swaped</td>
+            <td>{roundUp(netNumToken0, digits)} {token0}</td>
+          </tr>
+
+
+          <tr style={{backgroundColor: 'honeydew'}}>
+            <td><strong>swap {netNumToken0} {token0} for</strong></td>
             <td>{roundUp(stepOne, digits)} {token1}</td>
           </tr>
 
           <tr style={{backgroundColor: 'honeydew'}}>
-            <td><strong>{roundUp(stepOne, digits)} {token1} nets</strong></td>
+            <td>Liquidity Provider Fee 2</td>
+            <td>{roundUp(liquidityProviderFee2, digits)} {token1}</td>
+          </tr>
+
+          <tr style={{backgroundColor: 'honeydew'}}>
+            <td><strong>swap {roundUp(stepOneNetFee, digits)} {token1} for</strong></td>
             <td>{roundUp(stepTwo, digits)} {token0}</td>
           </tr>
 
           <tr style={{backgroundColor: 'honeydew'}}>
-            <td>Trade profit/loss</td>
-            <td>{roundUp(stepTwo - numToken0, digits)} {token0}</td>
+            <td>Trade profit/loss (before gas fee)</td>
+            <td>{roundUp(stepTwo - grossNumToken0, digits)} {token0}</td>
           </tr>
 
-          <tr>
-            <td colSpan={2}><strong>With fees</strong></td>
-          </tr>
-
-          <tr style={{backgroundColor: 'lightcoral'}}>
-
-            <td colSpan={2}>👨‍💻 coming soon.</td>
-          </tr>
 
         </tbody>
       </Table>
