@@ -5,6 +5,7 @@ import { ethers } from "ethers";
 
 function Pair() {
   const digits = 4;
+
   function roundUp(num, precision) {
     precision = Math.pow(10, precision)
     return Math.ceil(num * precision) / precision
@@ -46,6 +47,10 @@ function Pair() {
   const [stepOneNetFee, setStepOneNetFee] = useState(0);
   const [stepTwo, setStepTwo] = useState(0);
   const [profit, setProfit] = useState(0);
+
+  const myComponentStyle = {
+    backgroundColor: (profit > 0) ? "lightgreen" : "lightcoral",
+  }
 
   const onChangeNumToken0 = (event) => {
     const localGrossNumToken0string = event.target.value;
@@ -154,9 +159,6 @@ function Pair() {
     getReserves();
   }, [loading])
 
-
-
-
   return(
     <>
       <Table bordered>
@@ -183,7 +185,7 @@ function Pair() {
             </td>
           </tr>
 
-          <tr style={{backgroundColor: 'antiquewhite'}}>
+          <tr>
             <td>Spread</td>
             <td>
               {reservesEx1["xovery"] && reservesEx2["xovery"] && roundUp(Math.abs(reservesEx1["xovery"] - reservesEx2["xovery"])/reservesEx1["xovery"], digits)}
@@ -202,33 +204,33 @@ function Pair() {
             </td>
           </tr>
 
-          <tr style={{backgroundColor: 'honeydew'}}>
+          <tr>
             <td>Liquidity Provider Fee 1</td>
             <td>{roundUp(liquidityProviderFee1, digits)} {token0}</td>
           </tr>
 
-          <tr style={{backgroundColor: 'honeydew'}}>
+          <tr>
             <td>Net {token0} swaped</td>
             <td>{roundUp(netNumToken0, digits)} {token0}</td>
           </tr>
 
 
-          <tr style={{backgroundColor: 'honeydew'}}>
+          <tr>
             <td>swap <strong>{netNumToken0} {token0}</strong> for</td>
             <td>{roundUp(stepOne, digits)} {token1}</td>
           </tr>
 
-          <tr style={{backgroundColor: 'honeydew'}}>
+          <tr>
             <td>Liquidity Provider Fee 2</td>
             <td>{roundUp(liquidityProviderFee2, digits)} {token1}</td>
           </tr>
 
-          <tr style={{backgroundColor: 'honeydew'}}>
+          <tr>
             <td>swap <strong>{roundUp(stepOneNetFee, digits)} {token1}</strong> for</td>
             <td>{roundUp(stepTwo, digits)} {token0}</td>
           </tr>
 
-          <tr style={{backgroundColor: 'honeydew'}}>
+          <tr style={myComponentStyle}>
             <td>profit/loss (before gas fee)</td>
             <td>{roundUp(profit, digits)} {token0}</td>
           </tr>
