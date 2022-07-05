@@ -1,5 +1,5 @@
 import { Button, Table, Placeholder } from 'react-bootstrap';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import pairAbi from './utils/IUniswapV2Pair.json'
 import { ethers } from "ethers";
 
@@ -49,24 +49,10 @@ function Pair() {
   const onChangeNumToken0 = (event) => {
     const localGrossNumToken0string = event.target.value;
     const localGrossNumToken0 = Number(localGrossNumToken0string);
-    updatePrices(localGrossNumToken0);
+    setGrossNumToken0(localGrossNumToken0);
   };
 
-  const updatePrices = (localGrossNumToken0) => {
-    const localLiquidityProviderFee1 = localGrossNumToken0 * 0.003;
-    setLiquidityProviderFee1(localLiquidityProviderFee1);
-    const localNetNumToken0 = localGrossNumToken0 - localLiquidityProviderFee1;
-    setGrossNumToken0(localGrossNumToken0);
-    setNetNumToken0(localNetNumToken0);
-    const localStepOne = dyAnswer(localNetNumToken0, reservesEx1);
-    setStepOne(localStepOne);
-    const localLiquidityProviderFee2 = localStepOne * 0.003;
-    setLiquidityProviderFee2(localLiquidityProviderFee2);
-    const localStepOneNetFee = localStepOne - localLiquidityProviderFee2;
-    setStepOneNetFee(localStepOneNetFee);
-    const localStepTwo = dxAnswer(localStepOneNetFee, reservesEx2);
-    setStepTwo(localStepTwo);
-  };
+
 
   // exchange1 = quickswap
   const exchange1_pair_address = '0x2cF7252e74036d1Da831d11089D326296e64a728';
@@ -86,8 +72,27 @@ function Pair() {
     setLoading(loading+1);
   }
 
+  useMemo(() => {
+    const localLiquidityProviderFee1 = grossNumToken0 * 0.003;
+    setLiquidityProviderFee1(localLiquidityProviderFee1);
+
+    const localNetNumToken0 = grossNumToken0 - localLiquidityProviderFee1;
+    setNetNumToken0(localNetNumToken0);
+
+    const localStepOne = dyAnswer(localNetNumToken0, reservesEx1);
+    setStepOne(localStepOne);
+
+    const localLiquidityProviderFee2 = localStepOne * 0.003;
+    setLiquidityProviderFee2(localLiquidityProviderFee2);
+
+    const localStepOneNetFee = localStepOne - localLiquidityProviderFee2;
+    setStepOneNetFee(localStepOneNetFee);
+
+    const localStepTwo = dxAnswer(localStepOneNetFee, reservesEx2);
+    setStepTwo(localStepTwo);
+  }, [grossNumToken0, reservesEx1, reservesEx2]);
+
   useEffect(() => {
-    console.log('useEffect triggered');
     const pair_abi = pairAbi.abi;
     const getReserves = async () => {
       try {
@@ -135,9 +140,6 @@ function Pair() {
               "xovery": xoveryex2
             }
           );   
-          
-          updatePrices(grossNumToken0);
-
         } else {
           console.log("Ethereum object doesn't exist!")
         }
@@ -147,7 +149,10 @@ function Pair() {
     }
 
     getReserves();
-  }, [loading, grossNumToken0])
+  }, [loading])
+
+
+
 
   return(
     <>
@@ -206,7 +211,7 @@ function Pair() {
 
 
           <tr style={{backgroundColor: 'honeydew'}}>
-            <td><strong>swap {netNumToken0} {token0} for</strong></td>
+            <td>swap <strong>{netNumToken0} {token0}</strong> for</td>
             <td>{roundUp(stepOne, digits)} {token1}</td>
           </tr>
 
@@ -216,7 +221,7 @@ function Pair() {
           </tr>
 
           <tr style={{backgroundColor: 'honeydew'}}>
-            <td><strong>swap {roundUp(stepOneNetFee, digits)} {token1} for</strong></td>
+            <td>swap <strong>{roundUp(stepOneNetFee, digits)} {token1}</strong> for</td>
             <td>{roundUp(stepTwo, digits)} {token0}</td>
           </tr>
 
