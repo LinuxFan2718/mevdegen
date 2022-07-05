@@ -45,14 +45,13 @@ function Pair() {
   const [stepOne, setStepOne] = useState(0);
   const [stepOneNetFee, setStepOneNetFee] = useState(0);
   const [stepTwo, setStepTwo] = useState(0);
+  const [profit, setProfit] = useState(0);
 
   const onChangeNumToken0 = (event) => {
     const localGrossNumToken0string = event.target.value;
     const localGrossNumToken0 = Number(localGrossNumToken0string);
     setGrossNumToken0(localGrossNumToken0);
   };
-
-
 
   // exchange1 = quickswap
   const exchange1_pair_address = '0x2cF7252e74036d1Da831d11089D326296e64a728';
@@ -91,6 +90,10 @@ function Pair() {
     const localStepTwo = dxAnswer(localStepOneNetFee, reservesEx2);
     setStepTwo(localStepTwo);
   }, [grossNumToken0, reservesEx1, reservesEx2]);
+
+  useMemo(() => {
+    setProfit(stepTwo - grossNumToken0);
+  }, [stepTwo, grossNumToken0]);
 
   useEffect(() => {
     const pair_abi = pairAbi.abi;
@@ -226,8 +229,8 @@ function Pair() {
           </tr>
 
           <tr style={{backgroundColor: 'honeydew'}}>
-            <td>Trade profit/loss (before gas fee)</td>
-            <td>{roundUp(stepTwo - grossNumToken0, digits)} {token0}</td>
+            <td>profit/loss (before gas fee)</td>
+            <td>{roundUp(profit, digits)} {token0}</td>
           </tr>
 
 
