@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import pairAbi from './utils/IUniswapV2Pair.json'
 import { ethers } from "ethers";
 
-function Pair() {
+function Pair(props) {
   const digits = 4;
 
   function roundUp(num, precision) {
@@ -233,6 +233,26 @@ function Pair() {
           <tr style={myComponentStyle}>
             <td>profit/loss (before gas fee)</td>
             <td>{roundUp(profit, digits)} {token0}</td>
+          </tr>
+
+          <tr>
+            <td>price for one gas (fast)</td>
+            <td>{props.gasResult["fast"]} gwei (1 gwei = 0.000000001 MATIC)</td>
+          </tr>
+
+          <tr>
+            <td>approximate gas needed (each swap)</td>
+            <td>125,000 gas</td>
+          </tr>
+
+          <tr>
+            <td>Transaction Fee (each swap)</td>
+            <td>{props.gasResult["fast"] * 0.000000001 * 125000} MATIC</td>
+          </tr>
+
+          <tr>
+            <td>Transaction Fee (each swap)</td>
+            <td>coming soon USDC</td>
           </tr>
 
 
