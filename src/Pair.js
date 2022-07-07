@@ -47,6 +47,13 @@ function Pair(props) {
   const [stepOneNetFee, setStepOneNetFee] = useState(0);
   const [stepTwo, setStepTwo] = useState(0);
   const [profit, setProfit] = useState(0);
+  const [reservesMatic, setReservesMatic] = useState(
+    {
+      "matic": 0,
+      "usdc": 0,
+      "maticPrice": 0
+    }
+  );
 
   const myComponentStyle = {
     backgroundColor: (profit > 0) ? "lightgreen" : "lightcoral",
@@ -71,6 +78,9 @@ function Pair(props) {
   // shared between exchange 1 and 2
   const token0 = 'USDC';
   const token1 = 'USDT';
+
+  // quickswap MATIC USDC pair to get US$ price for MATIC
+  const quickswap_matic_usdc_address = '0x6e7a5fafcec6bb1e78bae2a1f0b612012bf14827';
   
   const triggerLoading = () => {
     setLoading(loading+1);
@@ -147,7 +157,29 @@ function Pair(props) {
               "y": yex2,
               "xovery": xoveryex2
             }
-          );   
+          );
+
+          // get MATIC price
+          const quickswapMaticPairContract = new ethers.Contract(
+            quickswap_matic_usdc_address,
+            pair_abi,
+            signer);
+
+          const getReservesMaticResult = await quickswapMaticPairContract.getReserves();
+
+          // don't know why matic is 10**12 larger than usdc
+          const maticReserves = getReservesMaticResult.reserve0.div(10**12);
+          const usdcReserves = getReservesMaticResult.reserve1;
+          const maticPrice = usdcReserves.toNumber() / maticReserves.toNumber()
+
+          setReservesMatic(
+            {
+              "matic": maticReserves,
+              "usdc": usdcReserves,
+              "maticPrice": maticPrice
+            }
+          )
+
         } else {
           console.log("Ethereum object doesn't exist!")
         }
@@ -251,8 +283,18 @@ function Pair(props) {
           </tr>
 
           <tr>
+            <td>USDC / MATIC</td>
+            <td>${roundUp(reservesMatic["maticPrice"].toString(), digits)}</td>
+          </tr>
+
+          <tr>
             <td>Transaction Fee (each swap)</td>
-            <td>coming soon USDC</td>
+            <td>$ {props.gasResult["fast"] * 0.000000001 * 125000 * reservesMatic["maticPrice"]}</td>
+          </tr>
+
+          <tr style={myComponentStyle}>
+            <td>Net profit/loss</td>
+            <td>{roundUp(profit - 2 * props.gasResult["fast"] * 0.000000001 * 125000 * reservesMatic["maticPrice"], digits)} {token0}</td>
           </tr>
 
 
