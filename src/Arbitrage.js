@@ -1,6 +1,7 @@
-import { Card } from 'react-bootstrap';
+import { Card, Table } from 'react-bootstrap';
 import React, { useEffect, useState } from 'react';
 import PairShow from './PairShow.js';
+import PairRow from './PairRow.js';
 
 function Arbitrage({address}) {
   const [gasResult, setGasResult] = useState({
@@ -11,6 +12,7 @@ function Arbitrage({address}) {
     "blockTime": 0,
     "blockNumber": 0
   })
+  const [grossNumToken0, setGrossNumToken0] = useState(1000);
 
   useEffect(() => {
     fetch("https://gasstation-mainnet.matic.network")
@@ -46,6 +48,12 @@ function Arbitrage({address}) {
     "name": 'Sushiswap'
   };
 
+  const onChangeNumToken0 = (event) => {
+    const localGrossNumToken0string = event.target.value;
+    const localGrossNumToken0 = Number(localGrossNumToken0string);
+    setGrossNumToken0(localGrossNumToken0);
+  };
+
   return(
     <>
       <Card>
@@ -65,8 +73,13 @@ function Arbitrage({address}) {
       </Card>
       { address ? (
         <>
-          <PairShow gasResult={gasResult} exchange1={exchange1} exchange2={exchange2} />
-          <PairShow gasResult={gasResult} exchange1={exchange2} exchange2={exchange1} />
+          <input value={grossNumToken0} onChange={onChangeNumToken0} />
+          <Table>
+            <tbody>
+              <PairRow gasResult={gasResult} exchange1={exchange1} exchange2={exchange2} grossNumToken0={grossNumToken0} />
+              <PairRow gasResult={gasResult} exchange1={exchange2} exchange2={exchange1} grossNumToken0={grossNumToken0} />
+            </tbody>
+          </Table>
         </>
       ) : (
         <>No wallet connected. This page requires a wallet to query the blockchain.</>
