@@ -2,43 +2,11 @@ import { Button, Table, Placeholder } from 'react-bootstrap';
 import React, { useEffect, useMemo, useState } from 'react';
 import pairAbi from './utils/IUniswapV2Pair.json'
 import { ethers } from "ethers";
+import { digits, gasPerSwap, gweiFactor, dxAnswer, dyAnswer, roundUp } from './math.js'
 
-function Pair(props) {
+function PairShow(props) {
   // quickswap MATIC USDC pair to get US$ price for MATIC
   const quickswap_matic_usdc_address = '0x6e7a5fafcec6bb1e78bae2a1f0b612012bf14827';
-
-  const digits = 4;
-  const gasPerSwap = 125000;
-  const gweiFactor = 0.000000001;
-
-  function roundUp(num, precision) {
-    precision = Math.pow(10, precision)
-    return Math.ceil(num * precision) / precision
-  }
-
-  function dyAnswer(dx, reservesEx) {
-    const xbignum = reservesEx["x"];
-    const ybignum = reservesEx["y"];
-    if (!xbignum || !ybignum) {
-      return null;
-    }
-    const x = xbignum.toNumber();
-    const y = ybignum.toNumber();
-    const dy = (y * dx) / (x + dx);
-    return dy;
-  }
-
-  function dxAnswer(dy, reservesEx) {
-    const xbignum = reservesEx["x"];
-    const ybignum = reservesEx["y"];
-    if (!xbignum || !ybignum) {
-      return null;
-    }
-    const x = xbignum.toNumber();
-    const y = ybignum.toNumber();
-    const dx = (x * dy) / (y + dy);
-    return dx;
-  }
 
   const [reservesEx1, setReservesEx1] = useState({});
   const [reservesEx2, setReservesEx2] = useState([null]);
@@ -300,4 +268,4 @@ function Pair(props) {
   )
 }
 
-export default Pair
+export default PairShow

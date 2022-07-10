@@ -1,6 +1,6 @@
 import { Card } from 'react-bootstrap';
 import React, { useEffect, useState } from 'react';
-import Pair from './Pair.js';
+import PairShow from './PairShow.js';
 
 function Arbitrage({address}) {
   const [gasResult, setGasResult] = useState({
@@ -65,8 +65,8 @@ function Arbitrage({address}) {
       </Card>
       { address ? (
         <>
-          <Pair gasResult={gasResult} exchange1={exchange1} exchange2={exchange2} />
-          <Pair gasResult={gasResult} exchange1={exchange2} exchange2={exchange1} />
+          <PairShow gasResult={gasResult} exchange1={exchange1} exchange2={exchange2} />
+          <PairShow gasResult={gasResult} exchange1={exchange2} exchange2={exchange1} />
         </>
       ) : (
         <>No wallet connected. This page requires a wallet to query the blockchain.</>
