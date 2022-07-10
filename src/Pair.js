@@ -4,6 +4,23 @@ import pairAbi from './utils/IUniswapV2Pair.json'
 import { ethers } from "ethers";
 
 function Pair(props) {
+  // exchange1 = quickswap
+  const exchange1_pair_address = '0x2cF7252e74036d1Da831d11089D326296e64a728';
+  const exchange1_base_url = "https://info.quickswap.exchange/#/pair/";
+  const exchange1_params = "";
+  const exchange1_name = 'Quickswap';
+  // exchange2 = sushiswap
+  const exchange2_pair_address = '0x4b1f1e2435a9c96f7330faea190ef6a7c8d70001';
+  const exchange2_base_url = "https://app.sushi.com/analytics/pools/"
+  const exchange2_params = "?chainId=137";
+  const exchange2_name = 'Sushiswap';
+  // shared between exchange 1 and 2
+  const token0 = 'USDC';
+  const token1 = 'USDT';
+
+  // quickswap MATIC USDC pair to get US$ price for MATIC
+  const quickswap_matic_usdc_address = '0x6e7a5fafcec6bb1e78bae2a1f0b612012bf14827';
+
   const digits = 4;
   const gasPerSwap = 125000;
   const gweiFactor = 0.000000001;
@@ -65,23 +82,6 @@ function Pair(props) {
     const localGrossNumToken0 = Number(localGrossNumToken0string);
     setGrossNumToken0(localGrossNumToken0);
   };
-
-  // exchange1 = quickswap
-  const exchange1_pair_address = '0x2cF7252e74036d1Da831d11089D326296e64a728';
-  const exchange1_base_url = "https://info.quickswap.exchange/#/pair/";
-  const exchange1_params = "";
-  const exchange1_name = 'Quickswap';
-  // exchange2 = sushiswap
-  const exchange2_pair_address = '0x4b1f1e2435a9c96f7330faea190ef6a7c8d70001';
-  const exchange2_base_url = "https://app.sushi.com/analytics/pools/"
-  const exchange2_params = "?chainId=137";
-  const exchange2_name = 'Sushiswap';
-  // shared between exchange 1 and 2
-  const token0 = 'USDC';
-  const token1 = 'USDT';
-
-  // quickswap MATIC USDC pair to get US$ price for MATIC
-  const quickswap_matic_usdc_address = '0x6e7a5fafcec6bb1e78bae2a1f0b612012bf14827';
   
   const triggerLoading = () => {
     setLoading(loading+1);
