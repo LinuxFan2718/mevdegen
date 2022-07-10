@@ -135,12 +135,14 @@ function Pair(props) {
           const xex1 = getReserves1Result.reserve0;
           const yex1 = getReserves1Result.reserve1;
           const xoveryex1 = xex1.toNumber() / yex1.toNumber();
+          const yoverxex1 = yex1.toNumber() / xex1.toNumber();
 
           setReservesEx1(
             {
               "x": xex1,
               "y": yex1,
-              "xovery": xoveryex1
+              "xovery": xoveryex1,
+              "yoverx": yoverxex1
             }
           );
 
@@ -155,12 +157,14 @@ function Pair(props) {
           const xex2 = getReserves2Result.reserve0;
           const yex2 = getReserves2Result.reserve1;
           const xoveryex2 = xex2.toNumber() / yex2.toNumber();
+          const yoverxex2 = yex2.toNumber() / xex2.toNumber();
 
           setReservesEx2(
             {
               "x": xex2,
               "y": yex2,
-              "xovery": xoveryex2
+              "xovery": xoveryex2,
+              "yoverx": yoverxex2
             }
           );
 
@@ -202,12 +206,12 @@ function Pair(props) {
         <thead>
           <tr>
             <th>Exchange</th>
-            <th>{token0} / {token1}</th>
+            <th>{token0} ➡️ {token1} ➡️ {token0}</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><a href={exchange1_base_url+exchange1_pair_address+exchange1_params}>{exchange1_name}</a></td>
+            <td><a href={exchange1_base_url+exchange1_pair_address+exchange1_params}>{exchange1_name}</a> {token0} / {token1}</td>
             <td>
               {reservesEx1["xovery"] && roundUp(reservesEx1["xovery"], digits)}
               {!reservesEx1["xovery"] && <Placeholder animation="glow"><Placeholder xs={12} /></Placeholder>}
@@ -215,10 +219,10 @@ function Pair(props) {
 
           </tr>
           <tr>
-            <td><a href={exchange2_base_url+exchange2_pair_address+exchange2_params}>{exchange2_name}</a></td>
+            <td><a href={exchange2_base_url+exchange2_pair_address+exchange2_params}>{exchange2_name}</a> {token1} / {token0}</td>
             <td>
-              {reservesEx2["xovery"] && roundUp(reservesEx2["xovery"], digits)}
-              {!reservesEx2["xovery"] && <Placeholder animation="glow"><Placeholder xs={12} /></Placeholder>}
+              {reservesEx2["yoverx"] && roundUp(reservesEx2["yoverx"], digits)}
+              {!reservesEx2["yoverx"] && <Placeholder animation="glow"><Placeholder xs={12} /></Placeholder>}
             </td>
           </tr>
 
