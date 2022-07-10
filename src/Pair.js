@@ -4,20 +4,6 @@ import pairAbi from './utils/IUniswapV2Pair.json'
 import { ethers } from "ethers";
 
 function Pair(props) {
-  // exchange1 = quickswap
-  const exchange1_pair_address = '0x2cF7252e74036d1Da831d11089D326296e64a728';
-  const exchange1_base_url = "https://info.quickswap.exchange/#/pair/";
-  const exchange1_params = "";
-  const exchange1_name = 'Quickswap';
-  // exchange2 = sushiswap
-  const exchange2_pair_address = '0x4b1f1e2435a9c96f7330faea190ef6a7c8d70001';
-  const exchange2_base_url = "https://app.sushi.com/analytics/pools/"
-  const exchange2_params = "?chainId=137";
-  const exchange2_name = 'Sushiswap';
-  // shared between exchange 1 and 2
-  const token0 = 'USDC';
-  const token1 = 'USDT';
-
   // quickswap MATIC USDC pair to get US$ price for MATIC
   const quickswap_matic_usdc_address = '0x6e7a5fafcec6bb1e78bae2a1f0b612012bf14827';
 
@@ -126,7 +112,7 @@ function Pair(props) {
 
           // exchange 1
           const exchange1PairContract = new ethers.Contract(
-            exchange1_pair_address,
+            props.exchange1["pairAddress"],
             pair_abi,
             signer);
   
@@ -148,7 +134,7 @@ function Pair(props) {
 
           // exchange 2
           const exchange2PairContract = new ethers.Contract(
-            exchange2_pair_address,
+            props.exchange2["pairAddress"],
             pair_abi,
             signer);
   
@@ -198,7 +184,7 @@ function Pair(props) {
     }
 
     getReserves();
-  }, [loading])
+  }, [loading, props.exchange1, props.exchange2])
 
   return(
     <>
@@ -206,12 +192,12 @@ function Pair(props) {
         <thead>
           <tr>
             <th>Exchange</th>
-            <th>{token0} ➡️ {token1} ➡️ {token0}</th>
+            <th>{props.exchange2["token0"]} ➡️ {props.exchange2["token1"]} ➡️ {props.exchange2["token0"]}</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><a href={exchange1_base_url+exchange1_pair_address+exchange1_params}>{exchange1_name}</a> {token0} / {token1}</td>
+            <td><a href={props.exchange1["baseUrl"]+props.exchange1["pairAddress"]+props.exchange1["params"]}>{props.exchange1["name"]}</a> {props.exchange2["token0"]} / {props.exchange2["token1"]}</td>
             <td>
               {reservesEx1["xovery"] && roundUp(reservesEx1["xovery"], digits)}
               {!reservesEx1["xovery"] && <Placeholder animation="glow"><Placeholder xs={12} /></Placeholder>}
@@ -219,7 +205,7 @@ function Pair(props) {
 
           </tr>
           <tr>
-            <td><a href={exchange2_base_url+exchange2_pair_address+exchange2_params}>{exchange2_name}</a> {token1} / {token0}</td>
+            <td><a href={props.exchange2["baseUrl"]+props.exchange2["pairAddress"]+props.exchange2["params"]}>{props.exchange2["name"]}</a> {props.exchange2["token1"]} / {props.exchange2["token0"]}</td>
             <td>
               {reservesEx2["yoverx"] && roundUp(reservesEx2["yoverx"], digits)}
               {!reservesEx2["yoverx"] && <Placeholder animation="glow"><Placeholder xs={12} /></Placeholder>}
@@ -239,7 +225,7 @@ function Pair(props) {
           </tr>
 
           <tr>
-            <td>Number of {token0} to buy</td>
+            <td>Number of {props.exchange2["token0"]} to buy</td>
             <td>
               <input value={grossNumToken0} onChange={onChangeNumToken0} />
             </td>
@@ -247,33 +233,33 @@ function Pair(props) {
 
           <tr>
             <td>Liquidity Provider Fee 1</td>
-            <td>{roundUp(liquidityProviderFee1, digits)} {token0}</td>
+            <td>{roundUp(liquidityProviderFee1, digits)} {props.exchange2["token0"]}</td>
           </tr>
 
           <tr>
-            <td>Net {token0} swaped</td>
-            <td>{roundUp(netNumToken0, digits)} {token0}</td>
+            <td>Net {props.exchange2["token0"]} swaped</td>
+            <td>{roundUp(netNumToken0, digits)} {props.exchange2["token0"]}</td>
           </tr>
 
 
           <tr>
-            <td>swap <strong>{netNumToken0} {token0}</strong> for</td>
-            <td>{roundUp(stepOne, digits)} {token1}</td>
+            <td>swap <strong>{netNumToken0} {props.exchange2["token0"]}</strong> for</td>
+            <td>{roundUp(stepOne, digits)} {props.exchange2["token1"]}</td>
           </tr>
 
           <tr>
             <td>Liquidity Provider Fee 2</td>
-            <td>{roundUp(liquidityProviderFee2, digits)} {token1}</td>
+            <td>{roundUp(liquidityProviderFee2, digits)} {props.exchange2["token1"]}</td>
           </tr>
 
           <tr>
-            <td>swap <strong>{roundUp(stepOneNetFee, digits)} {token1}</strong> for</td>
-            <td>{roundUp(stepTwo, digits)} {token0}</td>
+            <td>swap <strong>{roundUp(stepOneNetFee, digits)} {props.exchange2["token1"]}</strong> for</td>
+            <td>{roundUp(stepTwo, digits)} {props.exchange2["token0"]}</td>
           </tr>
 
           <tr style={myComponentStyle}>
             <td>profit/loss (before gas fee)</td>
-            <td>{roundUp(profit, digits)} {token0}</td>
+            <td>{roundUp(profit, digits)} {props.exchange2["token0"]}</td>
           </tr>
 
           <tr>
@@ -303,13 +289,13 @@ function Pair(props) {
 
           <tr style={myComponentStyle}>
             <td>Net profit/loss</td>
-            <td>{roundUp(profit - 2 * transactionFee * reservesMatic["maticPrice"], digits)} {token0}</td>
+            <td>{roundUp(profit - 2 * transactionFee * reservesMatic["maticPrice"], digits)} {props.exchange2["token0"]}</td>
           </tr>
 
 
         </tbody>
       </Table>
-      <Button onClick={triggerLoading}>Refresh {token0} / {token1}</Button>
+      <Button onClick={triggerLoading}>Refresh {props.exchange2["token0"]} / {props.exchange2["token1"]}</Button>
     </>
   )
 }

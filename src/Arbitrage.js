@@ -28,6 +28,24 @@ function Arbitrage({address}) {
       )
   }, [])
 
+  const exchange1 = {
+    "pairAddress": '0x2cF7252e74036d1Da831d11089D326296e64a728',
+    "token0": 'USDC',
+    "token1": 'USDT',
+    "baseUrl": "https://info.quickswap.exchange/#/pair/",
+    "params": "",
+    "name": 'Quickswap'
+  };
+
+  const exchange2 = {
+    "pairAddress": '0x4b1f1e2435a9c96f7330faea190ef6a7c8d70001',
+    "token0": 'USDC',
+    "token1": 'USDT',
+    "baseUrl": "https://app.sushi.com/analytics/pools/",
+    "params": "?chainId=137",
+    "name": 'Sushiswap'
+  };
+
   return(
     <>
       <Card>
@@ -46,7 +64,7 @@ function Arbitrage({address}) {
         </Card.Body>
       </Card>
       { address ? (
-        <Pair gasResult={gasResult} />
+        <Pair gasResult={gasResult} exchange1={exchange1} exchange2={exchange2} />
       ) : (
         <>No wallet connected. This page requires a wallet to query the blockchain.</>
       )}
