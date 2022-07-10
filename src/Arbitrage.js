@@ -64,7 +64,10 @@ function Arbitrage({address}) {
         </Card.Body>
       </Card>
       { address ? (
-        <Pair gasResult={gasResult} exchange1={exchange1} exchange2={exchange2} />
+        <>
+          <Pair gasResult={gasResult} exchange1={exchange1} exchange2={exchange2} />
+          <Pair gasResult={gasResult} exchange1={exchange2} exchange2={exchange1} />
+        </>
       ) : (
         <>No wallet connected. This page requires a wallet to query the blockchain.</>
       )}
