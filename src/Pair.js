@@ -288,7 +288,7 @@ function Pair(props) {
 
           <tr>
             <td>Transaction Fee (each swap)</td>
-            <td>{transactionFee} MATIC</td>
+            <td>{roundUp(transactionFee, digits)} MATIC</td>
           </tr>
 
           <tr>
@@ -298,7 +298,7 @@ function Pair(props) {
 
           <tr>
             <td>Transaction Fee (each swap)</td>
-            <td>$ {transactionFee * reservesMatic["maticPrice"]}</td>
+            <td>$ {roundUp(transactionFee * reservesMatic["maticPrice"], digits)}</td>
           </tr>
 
           <tr style={myComponentStyle}>
