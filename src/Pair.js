@@ -5,13 +5,14 @@ import { ethers } from "ethers";
 
 function Pair(props) {
   const digits = 4;
+  const gasPerSwap = 125000;
+  const gweiFactor = 0.000000001;
 
   function roundUp(num, precision) {
     precision = Math.pow(10, precision)
     return Math.ceil(num * precision) / precision
   }
 
-  // X = ex1. Y = ex2
   function dyAnswer(dx, reservesEx) {
     const xbignum = reservesEx["x"];
     const ybignum = reservesEx["y"];
@@ -85,6 +86,10 @@ function Pair(props) {
   const triggerLoading = () => {
     setLoading(loading+1);
   }
+
+  const transactionFee = useMemo(() => {
+    return props.gasResult["fast"] * gweiFactor * gasPerSwap;
+  }, [props.gasResult])
 
   useMemo(() => {
     const localLiquidityProviderFee1 = grossNumToken0 * 0.003;
@@ -274,12 +279,12 @@ function Pair(props) {
 
           <tr>
             <td>approximate gas needed (each swap)</td>
-            <td>125,000 gas</td>
+            <td>{gasPerSwap} gas</td>
           </tr>
 
           <tr>
             <td>Transaction Fee (each swap)</td>
-            <td>{props.gasResult["fast"] * 0.000000001 * 125000} MATIC</td>
+            <td>{transactionFee} MATIC</td>
           </tr>
 
           <tr>
@@ -289,12 +294,12 @@ function Pair(props) {
 
           <tr>
             <td>Transaction Fee (each swap)</td>
-            <td>$ {props.gasResult["fast"] * 0.000000001 * 125000 * reservesMatic["maticPrice"]}</td>
+            <td>$ {transactionFee * reservesMatic["maticPrice"]}</td>
           </tr>
 
           <tr style={myComponentStyle}>
             <td>Net profit/loss</td>
-            <td>{roundUp(profit - 2 * props.gasResult["fast"] * 0.000000001 * 125000 * reservesMatic["maticPrice"], digits)} {token0}</td>
+            <td>{roundUp(profit - 2 * transactionFee * reservesMatic["maticPrice"], digits)} {token0}</td>
           </tr>
 
 
