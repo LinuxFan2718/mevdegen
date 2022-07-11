@@ -1,6 +1,5 @@
 import { Card, Table } from 'react-bootstrap';
 import React, { useEffect, useState } from 'react';
-import PairShow from './PairShow.js';
 import PairRow from './PairRow.js';
 
 function Arbitrage({address}) {
@@ -30,23 +29,47 @@ function Arbitrage({address}) {
       )
   }, [])
 
-  const exchange1 = {
-    "pairAddress": '0x2cF7252e74036d1Da831d11089D326296e64a728',
+  const pair1 = {
     "token0": 'USDC',
     "token1": 'USDT',
-    "baseUrl": "https://info.quickswap.exchange/#/pair/",
-    "params": "",
-    "name": 'Quickswap'
-  };
+    "reserveFactor": 1,
+    "exchanges": [
+      {
+        "pairAddress": '0x2cF7252e74036d1Da831d11089D326296e64a728',
+        "baseUrl": "https://info.quickswap.exchange/#/pair/",
+        "params": "",
+        "name": 'Quickswap'
+      },
+      {
+        "pairAddress": '0x4b1f1e2435a9c96f7330faea190ef6a7c8d70001',
+        "baseUrl": "https://app.sushi.com/analytics/pools/",
+        "params": "?chainId=137",
+        "name": 'Sushiswap'
+      }
+    ]
+  }
 
-  const exchange2 = {
-    "pairAddress": '0x4b1f1e2435a9c96f7330faea190ef6a7c8d70001',
-    "token0": 'USDC',
-    "token1": 'USDT',
-    "baseUrl": "https://app.sushi.com/analytics/pools/",
-    "params": "?chainId=137",
-    "name": 'Sushiswap'
-  };
+  const pair2 = {
+    "token0": 'WMATIC',
+    "token1": 'USDC',
+    "reserveFactor": 10**12,
+    "exchanges": [
+      {
+        "pairAddress": '0x6e7a5fafcec6bb1e78bae2a1f0b612012bf14827',
+        "baseUrl": "https://info.quickswap.exchange/#/pair/",
+        "params": "",
+        "name": 'Quickswap'
+      },
+      {
+        "pairAddress": '0xcd353f79d9fade311fc3119b841e1f456b54e858',
+        "baseUrl": "https://app.sushi.com/analytics/pools/",
+        "params": "?chainId=137",
+        "name": 'Sushiswap'
+      }
+    ]
+  }
+
+  const pairs = [pair1, pair2]
 
   const onChangeNumToken0 = (event) => {
     const localGrossNumToken0string = event.target.value;
@@ -61,7 +84,8 @@ function Arbitrage({address}) {
         <Card.Body>
           <Card.Title> Price comparison between Uniswap V2 clones</Card.Title>
           <Card.Text>
-            Use this page to search for arbitrage opportunities between Uniswap V2 clones on Polygon.
+            Use this page to search for arbitrage opportunities between Uniswap V2 
+            clones on Polygon.
           </Card.Text>
         </Card.Body>
         <Card.Body>
@@ -69,15 +93,25 @@ function Arbitrage({address}) {
           <Card.Text>
             {gasResult["fast"]} Gwei
           </Card.Text>
+          <Card.Title>Number of tokens to buy</Card.Title>
+          <Card.Text>
+            <input value={grossNumToken0} onChange={onChangeNumToken0} />
+          </Card.Text>
         </Card.Body>
       </Card>
       { address ? (
         <>
-          <input value={grossNumToken0} onChange={onChangeNumToken0} />
           <Table>
             <tbody>
-              <PairRow gasResult={gasResult} exchange1={exchange1} exchange2={exchange2} grossNumToken0={grossNumToken0} />
-              <PairRow gasResult={gasResult} exchange1={exchange2} exchange2={exchange1} grossNumToken0={grossNumToken0} />
+              {pairs.map(function(pair, index){
+                return <PairRow
+                          key={index}
+                          gasResult={gasResult}
+                          grossNumToken0={grossNumToken0}
+                          pair={pair}
+                        />;
+              })}
+              
             </tbody>
           </Table>
         </>
