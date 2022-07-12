@@ -3,7 +3,7 @@ import { Container, Nav, Navbar } from 'react-bootstrap';
 import Home from './Home';
 import Arbitrage from './Arbitrage';
 import Profile from './Profile';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const MevDegen = () => {
   const [currentAccount, setCurrentAccount] = useState("");
@@ -34,7 +34,11 @@ const MevDegen = () => {
     }
   }
 
-  const [currentPage, setCurrentPage] = useState('home')
+  useEffect(() => {
+    connectWallet();
+  }, [])
+
+  const [currentPage, setCurrentPage] = useState('arbitrage')
   let page = <Home />;
   if (currentPage === 'home') {
     page = <Home />;
@@ -64,9 +68,9 @@ const MevDegen = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link onClick={setCurrentPageHome}>Home</Nav.Link>
               <Nav.Link onClick={setCurrentPageArbitrage}>Arbitrage</Nav.Link>
               <Nav.Link onClick={setCurrentPageProfile}>Profile</Nav.Link>
+              <Nav.Link onClick={setCurrentPageHome}>Home</Nav.Link>
             </Nav>
             {currentAccount && (
               <Nav.Link as="button" onClick={disconnectWallet}>
