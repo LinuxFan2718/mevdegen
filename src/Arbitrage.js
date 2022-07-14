@@ -2,7 +2,7 @@ import { Card, Table } from 'react-bootstrap';
 import React, { useEffect, useState } from 'react';
 import PairRow from './PairRow.js';
 
-function Arbitrage({address}) {
+function Arbitrage() {
   const [gasResult, setGasResult] = useState({
     "safeLow": 0,
     "standard": 0,
@@ -13,6 +13,7 @@ function Arbitrage({address}) {
   })
   const [grossNumToken0, setGrossNumToken0] = useState(1000);
 
+  // migrate this to ethereum mainnet
   useEffect(() => {
     fetch("https://gasstation-mainnet.matic.network")
       .then(res => res.json())
@@ -20,56 +21,35 @@ function Arbitrage({address}) {
         (result) => {
           setGasResult(result);
         },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
         (error) => {
           console.error(error);
         }
       )
   }, [])
 
+  // https://v2.info.uniswap.org/pair/0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc
   const pair1 = {
     "token0": 'USDC',
-    "token1": 'USDT',
-    "reserveFactor": 1,
-    "exchanges": [
-      {
-        "pairAddress": '0x2cF7252e74036d1Da831d11089D326296e64a728',
-        "baseUrl": "https://info.quickswap.exchange/#/pair/",
-        "params": "",
-        "name": 'Quickswap'
-      },
-      {
-        "pairAddress": '0x4b1f1e2435a9c96f7330faea190ef6a7c8d70001',
-        "baseUrl": "https://app.sushi.com/analytics/pools/",
-        "params": "?chainId=137",
-        "name": 'Sushiswap'
-      }
-    ]
-  }
-
-  const pair2 = {
-    "token0": 'WMATIC',
-    "token1": 'USDC',
+    "token1": 'WETH',
     "reserveFactor": 10**12,
     "exchanges": [
       {
-        "pairAddress": '0x6e7a5fafcec6bb1e78bae2a1f0b612012bf14827',
-        "baseUrl": "https://info.quickswap.exchange/#/pair/",
+        "pairAddress": '0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc',
+        "baseUrl": "https://v2.info.uniswap.org/pair/",
         "params": "",
-        "name": 'Quickswap'
+        "name": 'Uniswap'
       },
       {
-        "pairAddress": '0xcd353f79d9fade311fc3119b841e1f456b54e858',
+        // https://app.sushi.com/analytics/pools/0x397ff1542f962076d0bfe58ea045ffa2d347aca0?chainId=1
+        "pairAddress": '0x397ff1542f962076d0bfe58ea045ffa2d347aca0',
         "baseUrl": "https://app.sushi.com/analytics/pools/",
-        "params": "?chainId=137",
+        "params": "?chainId=1",
         "name": 'Sushiswap'
       }
     ]
   }
 
-  const pairs = [pair1, pair2]
+  const pairs = [pair1]
 
   const onChangeNumToken0 = (event) => {
     const localGrossNumToken0string = event.target.value;
@@ -85,7 +65,7 @@ function Arbitrage({address}) {
           <Card.Title> Price comparison between Uniswap V2 clones</Card.Title>
           <Card.Text>
             Use this page to search for arbitrage opportunities between Uniswap V2 
-            clones on Polygon.
+            clones on Ethereum Mainnet.
           </Card.Text>
         </Card.Body>
         <Card.Body>
@@ -99,26 +79,22 @@ function Arbitrage({address}) {
           </Card.Text>
         </Card.Body>
       </Card>
-      { address ? (
-        <>
-          <Table>
-            <tbody>
-              {pairs.map(function(pair, index){
-                return <PairRow
-                          key={index}
-                          gasResult={gasResult}
-                          grossNumToken0={grossNumToken0}
-                          pair={pair}
-                        />;
-              })}
-              
-            </tbody>
-          </Table>
-        </>
-      ) : (
-        <>No wallet connected. This page requires a wallet to query the blockchain.</>
-      )}
-  </>
+      <>
+        <Table>
+          <tbody>
+            {pairs.map(function(pair, index){
+              return <PairRow
+                        key={index}
+                        gasResult={gasResult}
+                        grossNumToken0={grossNumToken0}
+                        pair={pair}
+                      />;
+            })}
+            
+          </tbody>
+        </Table>
+      </>
+    </>
   )
 }
 

@@ -10,18 +10,18 @@ function PairRow(props) {
   const exchange2 = props.pair["exchanges"][1];
   const reserveFactor = props.pair["reserveFactor"];
 
-  // quickswap MATIC USDC pair to get US$ price for MATIC
-  const quickswap_matic_usdc_address = '0x6e7a5fafcec6bb1e78bae2a1f0b612012bf14827';
+  // quickswap ETH USDC pair to get US$ price for ETH
+  const uniswap_eth_usdc_address = '0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc';
 
   const [reservesEx1, setReservesEx1] = useState({});
   const [reservesEx2, setReservesEx2] = useState([null]);
   const [stepTwo, setStepTwo] = useState(0);
   const [profit, setProfit] = useState(0);
-  const [reservesMatic, setReservesMatic] = useState(
+  const [reservesEth, setReservesEth] = useState(
     {
-      "matic": 0,
+      "eth": 0,
       "usdc": 0,
-      "maticPrice": 0
+      "ethPrice": 0
     }
   );
 
@@ -50,79 +50,73 @@ function PairRow(props) {
     const pair_abi = pairAbi.abi;
     const getReserves = async () => {
       try {
-        const { ethereum } = window;
-        if (ethereum) {
-          const provider = new ethers.providers.Web3Provider(ethereum);
-          const signer = provider.getSigner();
+        let url = "https://ethereum.mevdegen.com/v1/mainnet";
+        let provider = new ethers.providers.JsonRpcProvider(url);
 
-          // exchange 1
-          const exchange1PairContract = new ethers.Contract(
-            exchange1["pairAddress"],
-            pair_abi,
-            signer);
-  
-          const getReserves1Result = await exchange1PairContract.getReserves();
+        // exchange 1
+        const exchange1PairContract = new ethers.Contract(
+          exchange1["pairAddress"],
+          pair_abi,
+          provider);
 
-          const xex1 = getReserves1Result.reserve0.div(reserveFactor);
-          const yex1 = getReserves1Result.reserve1;
-          const xoveryex1 = xex1.toNumber() / yex1.toNumber();
-          const yoverxex1 = yex1.toNumber() / xex1.toNumber();
+        const getReserves1Result = await exchange1PairContract.getReserves();
 
-          setReservesEx1(
-            {
-              "x": xex1,
-              "y": yex1,
-              "xovery": xoveryex1,
-              "yoverx": yoverxex1
-            }
-          );
+        const xex1 = getReserves1Result.reserve0;
+        const yex1 = getReserves1Result.reserve1.div(reserveFactor);
+        const xoveryex1 = xex1.toNumber() / yex1.toNumber();
+        const yoverxex1 = yex1.toNumber() / xex1.toNumber();
 
-          // exchange 2
-          const exchange2PairContract = new ethers.Contract(
-            exchange2["pairAddress"],
-            pair_abi,
-            signer);
-  
-          const getReserves2Result = await exchange2PairContract.getReserves();
+        setReservesEx1(
+          {
+            "x": xex1,
+            "y": yex1,
+            "xovery": xoveryex1,
+            "yoverx": yoverxex1
+          }
+        );
 
-          const xex2 = getReserves2Result.reserve0.div(reserveFactor);
-          const yex2 = getReserves2Result.reserve1;
-          const xoveryex2 = xex2.toNumber() / yex2.toNumber();
-          const yoverxex2 = yex2.toNumber() / xex2.toNumber();
+        // exchange 2
+        const exchange2PairContract = new ethers.Contract(
+          exchange2["pairAddress"],
+          pair_abi,
+          provider);
 
-          setReservesEx2(
-            {
-              "x": xex2,
-              "y": yex2,
-              "xovery": xoveryex2,
-              "yoverx": yoverxex2
-            }
-          );
+        const getReserves2Result = await exchange2PairContract.getReserves();
 
-          // get MATIC price
-          const quickswapMaticPairContract = new ethers.Contract(
-            quickswap_matic_usdc_address,
-            pair_abi,
-            signer);
+        const xex2 = getReserves2Result.reserve0;
+        const yex2 = getReserves2Result.reserve1.div(reserveFactor);
+        const xoveryex2 = xex2.toNumber() / yex2.toNumber();
+        const yoverxex2 = yex2.toNumber() / xex2.toNumber();
 
-          const getReservesMaticResult = await quickswapMaticPairContract.getReserves();
+        setReservesEx2(
+          {
+            "x": xex2,
+            "y": yex2,
+            "xovery": xoveryex2,
+            "yoverx": yoverxex2
+          }
+        );
 
-          // don't know why matic is 10**12 larger than usdc
-          const maticReserves = getReservesMaticResult.reserve0.div(10**12);
-          const usdcReserves = getReservesMaticResult.reserve1;
-          const maticPrice = usdcReserves.toNumber() / maticReserves.toNumber()
+        // get ETH price
+        const quickswapEthPairContract = new ethers.Contract(
+          uniswap_eth_usdc_address,
+          pair_abi,
+          provider);
 
-          setReservesMatic(
-            {
-              "matic": maticReserves,
-              "usdc": usdcReserves,
-              "maticPrice": maticPrice
-            }
-          )
+        const getReservesEthResult = await quickswapEthPairContract.getReserves();
 
-        } else {
-          console.log("Ethereum object doesn't exist!")
-        }
+        // don't know why eth is 10**12 larger than usdc
+        const ethReserves = getReservesEthResult.reserve0;
+        const usdcReserves = getReservesEthResult.reserve1.div(10**12);
+        const ethPrice = usdcReserves.toNumber() / ethReserves.toNumber()
+
+        setReservesEth(
+          {
+            "eth": ethReserves,
+            "usdc": usdcReserves,
+            "ethPrice": ethPrice
+          }
+        )
       } catch (error) {
         console.log(error);
       }
@@ -140,7 +134,7 @@ function PairRow(props) {
         {token0} ➡️ {token1} ➡️
       </td>
       <td style={myComponentStyle}>
-        {roundUp(profit - 2 * transactionFee * reservesMatic["maticPrice"], digits)} {token0}
+        {roundUp(profit - 2 * transactionFee * reservesEth["ethPrice"], digits)} {token0}
       </td>
     </tr>
   )
