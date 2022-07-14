@@ -4,26 +4,18 @@ import { ethers } from "ethers";
 import { digits, gasPerSwap, gweiFactor, dxAnswer, dyAnswer, roundUp } from './math.js'
 
 function PairRow(props) {
+  const reservesEth = props.reservesEth;
   const token0 = props.pair['token0'];
   const token1 = props.pair['token1'];
   const exchange1 = props.pair["exchanges"][0];
   const exchange2 = props.pair["exchanges"][1];
-  const reserveFactor = props.pair["reserveFactor"];
-
-  // quickswap ETH USDC pair to get US$ price for ETH
-  const uniswap_eth_usdc_address = '0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc';
+  const reserveFactor0 = props.pair["reserveFactor0"];
+  const reserveFactor1 = props.pair["reserveFactor1"];
 
   const [reservesEx1, setReservesEx1] = useState({});
   const [reservesEx2, setReservesEx2] = useState([null]);
   const [stepTwo, setStepTwo] = useState(0);
   const [profit, setProfit] = useState(0);
-  const [reservesEth, setReservesEth] = useState(
-    {
-      "eth": 0,
-      "usdc": 0,
-      "ethPrice": 0
-    }
-  );
 
   const myComponentStyle = {
     backgroundColor: (profit > 0) ? "lightgreen" : "lightcoral",
@@ -61,8 +53,8 @@ function PairRow(props) {
 
         const getReserves1Result = await exchange1PairContract.getReserves();
 
-        const xex1 = getReserves1Result.reserve0;
-        const yex1 = getReserves1Result.reserve1.div(reserveFactor);
+        const xex1 = getReserves1Result.reserve0.div(reserveFactor0);
+        const yex1 = getReserves1Result.reserve1.div(reserveFactor1);
         const xoveryex1 = xex1.toNumber() / yex1.toNumber();
         const yoverxex1 = yex1.toNumber() / xex1.toNumber();
 
@@ -83,8 +75,8 @@ function PairRow(props) {
 
         const getReserves2Result = await exchange2PairContract.getReserves();
 
-        const xex2 = getReserves2Result.reserve0;
-        const yex2 = getReserves2Result.reserve1.div(reserveFactor);
+        const xex2 = getReserves2Result.reserve0.div(reserveFactor0);
+        const yex2 = getReserves2Result.reserve1.div(reserveFactor1);
         const xoveryex2 = xex2.toNumber() / yex2.toNumber();
         const yoverxex2 = yex2.toNumber() / xex2.toNumber();
 
@@ -96,34 +88,13 @@ function PairRow(props) {
             "yoverx": yoverxex2
           }
         );
-
-        // get ETH price
-        const quickswapEthPairContract = new ethers.Contract(
-          uniswap_eth_usdc_address,
-          pair_abi,
-          provider);
-
-        const getReservesEthResult = await quickswapEthPairContract.getReserves();
-
-        // don't know why eth is 10**12 larger than usdc
-        const ethReserves = getReservesEthResult.reserve0;
-        const usdcReserves = getReservesEthResult.reserve1.div(10**12);
-        const ethPrice = usdcReserves.toNumber() / ethReserves.toNumber()
-
-        setReservesEth(
-          {
-            "eth": ethReserves,
-            "usdc": usdcReserves,
-            "ethPrice": ethPrice
-          }
-        )
       } catch (error) {
         console.log(error);
       }
     }
 
     getReserves();
-  }, [exchange1, exchange2, reserveFactor])
+  }, [exchange1, exchange2, reserveFactor0, reserveFactor1])
 
   return(
     <tr>

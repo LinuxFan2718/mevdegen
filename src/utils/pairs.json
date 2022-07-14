@@ -1,0 +1,34 @@
+[
+  {
+    "token0": "USDC",
+    "token1": "WETH",
+    "reserveFactor0": 1,
+    "reserveFactor1": 1000000000000,
+    "exchanges": [
+      {
+        "pairAddress": "0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc",
+        "name": "Uniswap"
+      },
+      {
+        "pairAddress": "0x397ff1542f962076d0bfe58ea045ffa2d347aca0",
+        "name": "Sushiswap"
+      }
+    ]
+  },
+  {
+    "token0": "WETH",
+    "token1": "USDT",
+    "reserveFactor0": 1000000000000,
+    "reserveFactor1": 1,
+    "exchanges": [
+      {
+        "pairAddress": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+        "name": "Uniswap"
+      },
+      {
+        "pairAddress": "0x06da0fd433c1a5d7a4faa01111c044910a184553",
+        "name": "Sushiswap"
+      }
+    ]
+  }
+]
