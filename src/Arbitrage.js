@@ -1,7 +1,7 @@
 import { Card, Table } from 'react-bootstrap';
 import React, { useEffect, useState } from 'react';
 import PairRow from './PairRow.js';
-
+import { roundUp } from './math.js';
 import { ethers } from "ethers";
 import pairAbi from './utils/IUniswapV2Pair.json'
 const pairs = require('./utils/pairs.json')
@@ -94,7 +94,7 @@ function Arbitrage() {
           </Card.Text>
           <Card.Title>Ether Price</Card.Title>
           <Card.Text>
-            ${reservesEth["ethPrice"]}
+            ${roundUp(reservesEth["ethPrice"], 2)}
           </Card.Text>
           <Card.Title>Number of tokens to buy</Card.Title>
           <Card.Text>
