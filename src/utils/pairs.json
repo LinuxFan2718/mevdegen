@@ -30,5 +30,21 @@
         "name": "Sushiswap"
       }
     ]
+  },
+  {
+    "token0": "WBTC",
+    "token1": "WETH",
+    "reserveFactor0": 1,
+    "reserveFactor1": 10000000000,
+    "exchanges": [
+      {
+        "pairAddress": "0xbb2b8038a1640196fbe3e38816f3e67cba72d940",
+        "name": "Uniswap"
+      },
+      {
+        "pairAddress": "0xceff51756c56ceffca006cd410b03ffc46dd3a58",
+        "name": "Sushiswap"
+      }
+    ]
   }
 ]

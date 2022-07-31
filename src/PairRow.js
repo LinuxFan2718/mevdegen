@@ -107,6 +107,9 @@ function PairRow(props) {
       <td style={myComponentStyle}>
         {roundUp(profit - 2 * transactionFee * reservesEth["ethPrice"], digits)} {token0}
       </td>
+      <td style={myComponentStyle}>
+        {roundUp(100 * (profit - 2 * transactionFee * reservesEth["ethPrice"]) / props.grossNumToken0, digits)} %
+      </td>
     </tr>
   )
 }
